@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from route import landing, shop, cart, order
 
-app = FastAPI(title="ProKit Football Shop")
+app = FastAPI(title="Khunakorn Football Shop")
 
 _BASE = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=str(_BASE / "static")), name="static")

@@ -6,6 +6,7 @@
 
 <!-- ═══ HERO ═══ -->
 <section class="lp-hero">
+  <div class="lp-hero-blob"></div>
   <div class="lp-hero-inner">
 
     <div class="lp-hero-text">
@@ -43,7 +44,7 @@
     <div class="lp-hero-visual">
       <div class="lp-jersey-grid">
         {% for p in products %}
-        <a href="/shop/{{ p.id }}" class="lp-jersey-card lp-jc-{{ loop.index }}">
+        <a href="/shop/{{ p.id }}" class="lp-jersey-card lp-jc-{{ loop.index }}" style="--glow:{{ p.c1 }}55;">
           <div class="lp-jersey-wrap" style="background:linear-gradient(135deg,{{ p.c1 }}22,{{ p.c2 }}44);">
             {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "hr") }}
           </div>
@@ -63,7 +64,7 @@
 </section>
 
 <!-- ═══ STATS BAR ═══ -->
-<section class="lp-statsbar">
+<section class="lp-statsbar reveal">
   <div class="lp-statsbar-inner">
 
     <div class="lp-stat">
@@ -126,7 +127,7 @@
       <h2 class="lp-sec-title">คุณภาพที่คุณไว้วางใจได้</h2>
       <p class="lp-sec-sub">เสื้อทุกตัวผ่านการคัดสรรจากวัสดุชั้นนำ ออกแบบเพื่อนักกีฬาโดยเฉพาะ</p>
     </div>
-    <div class="lp-features-grid">
+    <div class="lp-features-grid reveal-stagger reveal">
 
       <div class="lp-feat-card">
         <div class="lp-feat-icon">
@@ -207,7 +208,7 @@
       <h2 class="lp-sec-title">เสื้อฟุตบอลยอดนิยม</h2>
       <p class="lp-sec-sub">คัดสรรเฉพาะรุ่นที่ได้รับความไว้วางใจจากทีมทั่วประเทศ</p>
     </div>
-    <div class="lp-prod-grid">
+    <div class="lp-prod-grid reveal-stagger reveal">
       {% for p in products %}
       <a href="/shop/{{ p.id }}" class="lp-prod-card">
         <div class="lp-prod-thumb" style="background:linear-gradient(135deg,{{ p.c1 }}18,{{ p.c2 }}35);">
@@ -240,7 +241,7 @@
       <h2 class="lp-sec-title">ง่ายแค่ 3 ขั้นตอน</h2>
       <p class="lp-sec-sub">สั่งซื้อออนไลน์ได้ตลอด 24 ชั่วโมง ทุกวัน ไม่ต้องโทรสอบถาม</p>
     </div>
-    <div class="lp-steps-grid">
+    <div class="lp-steps-grid reveal-stagger reveal">
       <div class="lp-step">
         <div class="lp-step-num">1</div>
         <h3>เลือกสินค้าที่ต้องการ</h3>
@@ -266,9 +267,9 @@
     <div class="lp-sec-header">
       <div class="lp-sec-label">รีวิวจากลูกค้า</div>
       <h2 class="lp-sec-title">ทีมที่ไว้วางใจเรา</h2>
-      <p class="lp-sec-sub">กว่า 500 ทีมทั่วประเทศที่เลือกใช้ ProKit Sport ซีซันแล้วซีซันเล่า</p>
+      <p class="lp-sec-sub">กว่า 500 ทีมทั่วประเทศที่เลือกใช้ Khunakorn Sport ซีซันแล้วซีซันเล่า</p>
     </div>
-    <div class="lp-testi-grid">
+    <div class="lp-testi-grid reveal-stagger reveal">
 
       <div class="lp-testi-card">
         <div class="lp-testi-stars">★★★★★</div>
@@ -319,8 +320,88 @@
   </div>
 </section>
 
+<!-- ═══ FAQ ═══ -->
+<section class="lp-faq" id="faq">
+  <div class="lp-faq-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">คำถามที่พบบ่อย</div>
+      <h2 class="lp-sec-title">มีคำถาม? เรามีคำตอบ</h2>
+      <p class="lp-sec-sub">รวมคำถามที่ลูกค้าถามบ่อยเกี่ยวกับการสั่งซื้อ การจัดส่ง และการรับประกัน</p>
+    </div>
+    <div class="lp-faq-list reveal-stagger reveal">
+
+      <details class="lp-faq-item" open>
+        <summary>
+          <span>สั่งซื้อขั้นต่ำกี่ตัว?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          ไม่มีขั้นต่ำ สั่งได้ตั้งแต่ 1 ตัวขึ้นไป เหมาะทั้งลูกค้ารายบุคคลและทีม
+          หากสั่งจำนวนมากตั้งแต่ 10 ตัวขึ้นไป ติดต่อทีมงานเพื่อรับราคาพิเศษสำหรับทีม/องค์กรได้เลย
+        </p>
+      </details>
+
+      <details class="lp-faq-item">
+        <summary>
+          <span>สกรีนชื่อและเบอร์ลงบนเสื้อได้ไหม?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          ได้ครับ/ค่ะ รองรับการสกรีนชื่อ เบอร์ และโลโก้ทีมด้านหลังและหน้าอก
+          แจ้งรายละเอียดที่ต้องการหลังสั่งซื้อ ทีมงานจะติดต่อกลับเพื่อยืนยันแบบก่อนผลิตทุกครั้ง
+        </p>
+      </details>
+
+      <details class="lp-faq-item">
+        <summary>
+          <span>เลือกไซซ์อย่างไรให้พอดีตัว?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          ทุกหน้ารายละเอียดสินค้ามีตารางไซซ์ S–XXL ให้เทียบรอบอกและความยาวตัว
+          หากไม่แน่ใจสามารถแชทสอบถามทีมงานเพื่อขอคำแนะนำไซซ์ที่เหมาะกับรูปร่างได้ฟรี
+        </p>
+      </details>
+
+      <details class="lp-faq-item">
+        <summary>
+          <span>ใช้เวลาผลิตและจัดส่งนานแค่ไหน?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          สินค้าพร้อมส่งจัดส่งภายใน 48 ชั่วโมงหลังยืนยันคำสั่งซื้อ
+          ส่วนออเดอร์สกรีนชื่อ-เบอร์ หรือสั่งผลิตทีมจำนวนมาก ใช้เวลาประมาณ 5–7 วันทำการ
+        </p>
+      </details>
+
+      <details class="lp-faq-item">
+        <summary>
+          <span>ชำระเงินช่องทางไหนได้บ้าง?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          รองรับโอนเงินผ่าน PromptPay โอนผ่านธนาคาร และเก็บเงินปลายทาง (COD)
+          เลือกช่องทางที่สะดวกได้ในขั้นตอนชำระเงินก่อนยืนยันคำสั่งซื้อ
+        </p>
+      </details>
+
+      <details class="lp-faq-item">
+        <summary>
+          <span>เปลี่ยน/คืนสินค้าได้หรือไม่?</span>
+          <span class="lp-faq-icon">+</span>
+        </summary>
+        <p class="lp-faq-answer">
+          รับประกันคุณภาพและเปลี่ยนคืนสินค้าได้ภายใน 30 วัน กรณีสินค้าชำรุดหรือไซซ์ไม่พอดี
+          (ยกเว้นสินค้าที่สกรีนชื่อ-เบอร์เฉพาะบุคคลตามสั่ง) โดยไม่มีค่าใช้จ่ายเพิ่มเติม
+        </p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
 <!-- ═══ CTA BANNER ═══ -->
-<section class="lp-cta-banner">
+<section class="lp-cta-banner reveal">
   <h2>พร้อมสั่งซื้อแล้วใช่ไหม?</h2>
   <p>เลือกชุดที่ใช่ให้ทีมของคุณวันนี้ · จัดส่งฟรีทั่วไทย ไม่มีขั้นต่ำ</p>
   <div class="lp-cta-banner-btns">
@@ -329,4 +410,25 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || !els.length) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
 {% endblock %}

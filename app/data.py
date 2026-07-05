@@ -4,7 +4,7 @@ PRODUCTS = [
     {
         "id": 1,
         "name": "Strike SS",
-        "brand": "ProKit",
+        "brand": "Khunakorn",
         "subtitle": "Short Sleeve · Standard Series",
         "type": "short",
         "price": 199,
@@ -17,7 +17,7 @@ PRODUCTS = [
     {
         "id": 2,
         "name": "Elite SS",
-        "brand": "ProKit",
+        "brand": "Khunakorn",
         "subtitle": "Short Sleeve · Elite Series",
         "type": "short",
         "price": 299,
@@ -30,7 +30,7 @@ PRODUCTS = [
     {
         "id": 3,
         "name": "Strike LS",
-        "brand": "ProKit",
+        "brand": "Khunakorn",
         "subtitle": "Long Sleeve · Standard Series",
         "type": "long",
         "price": 399,
@@ -43,7 +43,7 @@ PRODUCTS = [
     {
         "id": 4,
         "name": "Elite LS",
-        "brand": "ProKit",
+        "brand": "Khunakorn",
         "subtitle": "Long Sleeve · Elite Pro Series",
         "type": "long",
         "price": 499,

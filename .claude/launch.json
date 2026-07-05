@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "prokit-web",
+      "runtimeExecutable": "C:\\Users\\ASUS\\webside_t-shirt\\env\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "main:app", "--reload", "--port", "8010"],
+      "cwd": "C:\\Users\\ASUS\\webside_t-shirt\\app",
+      "port": 8010
+    }
+  ]
+}
