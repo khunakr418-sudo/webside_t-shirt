@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "partials/jersey.html" import jersey_svg %}
+{% block title %}สินค้าทั้งหมด — ProKit Sport{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">หน้าแรก</a> &rsaquo;
+  {% if filter_type == 'short' %}เสื้อแขนสั้น
+  {% elif filter_type == 'long' %}เสื้อแขนยาว
+  {% else %}สินค้าทั้งหมด{% endif %}
+</div>
+
+<div class="page-wrap">
+  <div class="main-content">
+
+    {% for p in products %}
+    <article class="post-card">
+      <div class="post-card-img" style="background:linear-gradient(135deg,{{ p.c1 }}18,{{ p.c2 }}35);">
+        {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "shp") }}
+        <span class="img-badge">{{ p.badge }}</span>
+        <span class="img-type">{% if p.type=='short' %}แขนสั้น{% else %}แขนยาว{% endif %}</span>
+      </div>
+      <div class="post-card-body">
+        <div class="post-meta">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Posted on <a href="#">14 มิถุนายน 2026</a> by <a href="#">admin</a>
+        </div>
+        <a href="/shop/{{ p.id }}" class="post-title">
+          {{ p.brand }} {{ p.name }} | {{ p.subtitle }}
+        </a>
+        <p class="post-excerpt">{{ p.material }} · {{ p.care }}</p>
+        <div class="feature-chips">
+          {% for f in p.features %}<span class="chip">✓ {{ f }}</span>{% endfor %}
+        </div>
+        <div class="post-footer">
+          <div class="post-price">฿{{ "{:,}".format(p.price) }}<small> / ตัว</small></div>
+          <a href="/shop/{{ p.id }}" class="btn-read">ดูสินค้า &rarr;</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+
+  </div>
+
+  <aside class="sidebar">
+    <div class="widget">
+      <div class="widget-title">🔍 กรองสินค้า</div>
+      <div class="widget-body">
+        <ul class="filter-list">
+          <li><a href="/shop/" {% if not filter_type %}style="color:var(--green);font-weight:800;"{% endif %}>ทั้งหมด <span>4</span></a></li>
+          <li><a href="/shop/?filter_type=short" {% if filter_type=='short' %}style="color:var(--green);font-weight:800;"{% endif %}>เสื้อแขนสั้น <span>2</span></a></li>
+          <li><a href="/shop/?filter_type=long" {% if filter_type=='long' %}style="color:var(--green);font-weight:800;"{% endif %}>เสื้อแขนยาว <span>2</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-title">📞 ติดต่อสั่งซื้อ</div>
+      <div class="widget-body" style="font-size:0.85rem;color:var(--muted);line-height:2;">
+        📱 02-XXX-XXXX<br>📧 support@prokit.th<br>🕐 จ–ศ 09:00–18:00 น.
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}

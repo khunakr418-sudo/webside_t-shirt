@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+{% from "partials/jersey.html" import jersey_svg %}
+{% block title %}ขายส่งเสื้อฟุตบอล Khunakorn — คุณภาพระดับมืออาชีพ ราคาขายส่งพิเศษ{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section class="lp-hero">
+  <div class="lp-hero-inner">
+
+    <div class="lp-hero-text">
+      <div class="lp-hero-eyebrow">⚽ ผู้นำด้านเสื้อฟุตบอลขายส่งทั่วไทย</div>
+      <h1 class="lp-hero-h1">
+        เสื้อฟุตบอลคุณภาพ<br>
+        <span>ระดับมืออาชีพ</span>
+      </h1>
+      <p class="lp-hero-sub">
+        สำหรับโรงเรียน ชมรมกีฬา และทีมแข่งขัน<br>
+        ผ้าพรีเมียม ดีไซน์สวย ส่งตรงทั่วไทยภายใน 48 ชม.
+      </p>
+      <div class="lp-hero-ctas">
+        <a href="/shop/" class="lp-cta-primary">🛒 ดูสินค้าทั้งหมด</a>
+        <a href="#products" class="lp-cta-ghost">รายละเอียดเพิ่มเติม →</a>
+      </div>
+      <div class="lp-hero-trust">
+        <div class="lp-trust-item">
+          <strong>500+</strong>
+          <span>ทีมที่ไว้วางใจ</span>
+        </div>
+        <div class="lp-trust-sep"></div>
+        <div class="lp-trust-item">
+          <strong>10,000+</strong>
+          <span>ตัวที่จัดส่งแล้ว</span>
+        </div>
+        <div class="lp-trust-sep"></div>
+        <div class="lp-trust-item">
+          <strong>4.9 ★</strong>
+          <span>คะแนนความพึงพอใจ</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lp-hero-visual">
+      <div class="lp-jersey-grid">
+        {% for p in products %}
+        <a href="/shop/{{ p.id }}" class="lp-jersey-card lp-jc-{{ loop.index }}">
+          <div class="lp-jersey-wrap" style="background:linear-gradient(135deg,{{ p.c1 }}22,{{ p.c2 }}44);">
+            {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "hr") }}
+          </div>
+          <div class="lp-jersey-name">{{ p.brand }} {{ p.name }}</div>
+          <div class="lp-jersey-price">฿{{ "{:,}".format(p.price) }}</div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+  <div class="lp-hero-wave">
+    <svg viewBox="0 0 1440 64" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,32 C240,64 480,0 720,32 C960,64 1200,0 1440,32 L1440,64 L0,64 Z" fill="#f5f5f5"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══ STATS BAR ═══ -->
+<section class="lp-statsbar">
+  <div class="lp-statsbar-inner">
+
+    <div class="lp-stat">
+      <div class="lp-stat-icon">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      </div>
+      <div class="lp-stat-text">
+        <strong>ส่งฟรีทั่วไทย</strong>
+        <span>ไม่มีขั้นต่ำ ทุกคำสั่งซื้อ</span>
+      </div>
+    </div>
+
+    <div class="lp-stat">
+      <div class="lp-stat-icon">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="lp-stat-text">
+        <strong>จัดส่งภายใน 48 ชม.</strong>
+        <span>วันทำการ จันทร์–ศุกร์</span>
+      </div>
+    </div>
+
+    <div class="lp-stat">
+      <div class="lp-stat-icon">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="lp-stat-text">
+        <strong>รับประกันคุณภาพ</strong>
+        <span>คืนสินค้าได้ภายใน 30 วัน</span>
+      </div>
+    </div>
+
+    <div class="lp-stat">
+      <div class="lp-stat-icon">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.72 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/>
+        </svg>
+      </div>
+      <div class="lp-stat-text">
+        <strong>ทีมงานพร้อมช่วยเหลือ</strong>
+        <span>จ–ศ 09:00–18:00 น.</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="lp-features">
+  <div class="lp-features-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">ทำไมต้องเลือกเรา</div>
+      <h2 class="lp-sec-title">คุณภาพที่คุณไว้วางใจได้</h2>
+      <p class="lp-sec-sub">เสื้อทุกตัวผ่านการคัดสรรจากวัสดุชั้นนำ ออกแบบเพื่อนักกีฬาโดยเฉพาะ</p>
+    </div>
+    <div class="lp-features-grid">
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <h3>วัสดุระดับพรีเมียม</h3>
+        <p>ผ้า DryFit และ AeroKnit™ คุณภาพสูง ระบายอากาศดีเยี่ยม ทนทาน ซักง่ายไม่ยับ</p>
+      </div>
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <h3>ราคาขายส่งพิเศษ</h3>
+        <p>ราคาเริ่มต้นเพียง ฿199 ต่อตัว ยิ่งสั่งมากยิ่งได้ราคาดี เหมาะสำหรับทีมและองค์กร</p>
+      </div>
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <rect x="1" y="3" width="15" height="13"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <h3>จัดส่งรวดเร็ว</h3>
+        <p>รับออเดอร์และจัดส่งภายใน 48 ชั่วโมง พร้อมระบบติดตามพัสดุแบบ real-time</p>
+      </div>
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h3>รองรับทุกไซซ์</h3>
+        <p>มีให้เลือก 5 ขนาด S M L XL XXL เหมาะกับนักกีฬาทุกรูปร่าง ทุกเพศ ทุกวัย</p>
+      </div>
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3>บริการหลังการขาย</h3>
+        <p>ทีมงานพร้อมให้คำแนะนำตลอดเวลา รับเปลี่ยนสินค้าภายใน 30 วัน ไม่มีค่าใช้จ่ายเพิ่ม</p>
+      </div>
+
+      <div class="lp-feat-card">
+        <div class="lp-feat-icon">
+          <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3>รองรับทุกขนาดทีม</h3>
+        <p>จากทีมเล็ก 10 คน ถึงองค์กรขนาดใหญ่ รับออเดอร์จำนวนมากไม่มีปัญหา พร้อม invoice</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRODUCTS ═══ -->
+<section class="lp-products" id="products">
+  <div class="lp-products-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">สินค้าแนะนำ</div>
+      <h2 class="lp-sec-title">เสื้อฟุตบอลยอดนิยม</h2>
+      <p class="lp-sec-sub">คัดสรรเฉพาะรุ่นที่ได้รับความไว้วางใจจากทีมทั่วประเทศ</p>
+    </div>
+    <div class="lp-prod-grid">
+      {% for p in products %}
+      <a href="/shop/{{ p.id }}" class="lp-prod-card">
+        <div class="lp-prod-thumb" style="background:linear-gradient(135deg,{{ p.c1 }}18,{{ p.c2 }}35);">
+          {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "lp") }}
+          <span class="lp-prod-badge">{{ p.badge }}</span>
+        </div>
+        <div class="lp-prod-body">
+          <div class="lp-prod-type">{% if p.type=='short' %}แขนสั้น{% else %}แขนยาว{% endif %}</div>
+          <div class="lp-prod-name">{{ p.brand }} {{ p.name }}</div>
+          <div class="lp-prod-sub">{{ p.subtitle }}</div>
+          <div class="lp-prod-footer">
+            <div class="lp-prod-price">฿{{ "{:,}".format(p.price) }}</div>
+            <span class="lp-prod-btn">ดูสินค้า</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:36px;">
+      <a href="/shop/" class="btn-read" style="padding:13px 44px;font-size:.95rem;">ดูสินค้าทั้งหมด →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW TO ORDER ═══ -->
+<section class="lp-steps">
+  <div class="lp-steps-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">วิธีการสั่งซื้อ</div>
+      <h2 class="lp-sec-title">ง่ายแค่ 3 ขั้นตอน</h2>
+      <p class="lp-sec-sub">สั่งซื้อออนไลน์ได้ตลอด 24 ชั่วโมง ทุกวัน ไม่ต้องโทรสอบถาม</p>
+    </div>
+    <div class="lp-steps-grid">
+      <div class="lp-step">
+        <div class="lp-step-num">1</div>
+        <h3>เลือกสินค้าที่ต้องการ</h3>
+        <p>เลือกรุ่น สี ไซซ์ และจำนวนที่ต้องการ ดูรายละเอียดและตารางไซซ์ได้ครบถ้วน</p>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-num">2</div>
+        <h3>เพิ่มลงตะกร้า &amp; ชำระเงิน</h3>
+        <p>ชำระผ่านโอนเงิน PromptPay หรือชำระปลายทาง (COD) สะดวกทุกรูปแบบ</p>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-num">3</div>
+        <h3>รับสินค้าที่บ้านคุณ</h3>
+        <p>จัดส่งทั่วไทยภายใน 48 ชั่วโมง พร้อมแจ้งเลขพัสดุให้ติดตามได้ทันที</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="lp-testimonials">
+  <div class="lp-testimonials-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">รีวิวจากลูกค้า</div>
+      <h2 class="lp-sec-title">ทีมที่ไว้วางใจเรา</h2>
+      <p class="lp-sec-sub">กว่า 500 ทีมทั่วประเทศที่เลือกใช้ ProKit Sport ซีซันแล้วซีซันเล่า</p>
+    </div>
+    <div class="lp-testi-grid">
+
+      <div class="lp-testi-card">
+        <div class="lp-testi-stars">★★★★★</div>
+        <p class="lp-testi-text">
+          "สั่งเสื้อให้ทีมโรงเรียน 50 ตัว คุณภาพดีมาก ผ้าระบายอากาศ เด็กๆ ชอบกันมาก
+          ส่งมาภายใน 2 วัน รวดเร็วเกินคาด จะสั่งอีกแน่นอนครับ"
+        </p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar" style="background:var(--green);">ส</div>
+          <div>
+            <div class="lp-testi-name">สมชาย วงศ์ดี</div>
+            <div class="lp-testi-role">ครูพลศึกษา โรงเรียนมัธยม · กรุงเทพฯ</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-testi-card">
+        <div class="lp-testi-stars">★★★★★</div>
+        <p class="lp-testi-text">
+          "ราคาขายส่งถูกมากเมื่อเทียบกับคุณภาพที่ได้รับ ทีมชมรมเราสั่งทุกปีมาหลายปีแล้ว
+          บริการดีเยี่ยม ตอบไลน์ไวมาก แนะนำเลยครับ"
+        </p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar" style="background:#1d4ed8;">ว</div>
+          <div>
+            <div class="lp-testi-name">วิชัย ประสิทธิ์ชัย</div>
+            <div class="lp-testi-role">ผู้จัดการทีมฟุตบอล ชมรมชุมชน · เชียงใหม่</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-testi-card">
+        <div class="lp-testi-stars">★★★★★</div>
+        <p class="lp-testi-text">
+          "ประทับใจมากค่ะ ตอบแชทไว ช่วยแนะนำไซซ์ให้ด้วย สินค้ามาครบตรงตามสั่ง
+          บรรจุภัณฑ์สวยงาม จะกลับมาซื้ออีกแน่นอนค่ะ"
+        </p>
+        <div class="lp-testi-author">
+          <div class="lp-testi-avatar" style="background:#7e22ce;">น</div>
+          <div>
+            <div class="lp-testi-name">นภา สุริยา</div>
+            <div class="lp-testi-role">หัวหน้าทีมชมรมกีฬาสตรี · ขอนแก่น</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BANNER ═══ -->
+<section class="lp-cta-banner">
+  <h2>พร้อมสั่งซื้อแล้วใช่ไหม?</h2>
+  <p>เลือกชุดที่ใช่ให้ทีมของคุณวันนี้ · จัดส่งฟรีทั่วไทย ไม่มีขั้นต่ำ</p>
+  <div class="lp-cta-banner-btns">
+    <a href="/shop/" class="lp-cta-wl">🛒 ดูสินค้าทั้งหมด</a>
+    <a href="tel:02XXXXXXX" class="lp-cta-line">📞 โทรสั่งซื้อเลย</a>
+  </div>
+</section>
+
+{% endblock %}

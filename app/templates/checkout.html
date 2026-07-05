@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}กรอกข้อมูลจัดส่ง — ProKit Sport{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">หน้าแรก</a> &rsaquo; <a href="/cart/">ตะกร้า</a> &rsaquo; ชำระเงิน
+</div>
+
+<div class="checkout-page">
+  <a href="/cart/" class="back-link">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    กลับตะกร้าสินค้า
+  </a>
+  <h1 style="font-size:1.4rem;font-weight:900;margin-bottom:20px;color:var(--green4);border-left:4px solid var(--green);padding-left:12px;">📦 ข้อมูลจัดส่ง</h1>
+
+  <div class="checkout-grid">
+    <div class="card">
+      <div class="card-head">📝 กรอกที่อยู่จัดส่ง</div>
+      <div class="card-body">
+        <form action="/order/confirm" method="post">
+          <div class="form-group">
+            <label>ชื่อ-นามสกุล ผู้รับ</label>
+            <input type="text" name="name" placeholder="เช่น สมชาย ใจดี" required>
+          </div>
+          <div class="form-group">
+            <label>เบอร์โทรศัพท์</label>
+            <input type="tel" name="phone" placeholder="0xx-xxx-xxxx" required>
+          </div>
+          <div class="form-group">
+            <label>ที่อยู่จัดส่ง (ครบถ้วน)</label>
+            <textarea name="address" placeholder="บ้านเลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด รหัสไปรษณีย์" required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">✅ ยืนยันคำสั่งซื้อ</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🧾 สรุปรายการสั่งซื้อ</div>
+      <div class="card-body">
+        {% for item in cart %}
+        <div class="order-row">
+          <span class="order-name">{{ item.name }} ({{ item.size }}) ×{{ item.qty }}</span>
+          <span class="order-price">฿{{ "{:,}".format(item.price * item.qty) }}</span>
+        </div>
+        {% endfor %}
+        <div class="order-row">
+          <span class="order-name">ค่าจัดส่ง</span>
+          <span style="color:#009688;font-weight:700;">ฟรี</span>
+        </div>
+        <div class="order-total">
+          <span>ยอดรวมทั้งหมด</span>
+          <span>฿{{ "{:,}".format(total) }}</span>
+        </div>
+        <div style="margin-top:16px;font-size:0.8rem;color:var(--muted);line-height:1.8;">
+          ✅ ชำระเงินหลังได้รับสินค้า (COD)<br>
+          ✅ โอนเงิน PromptPay ก่อนส่ง<br>
+          📦 จัดส่งภายใน 1–3 วันทำการ
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

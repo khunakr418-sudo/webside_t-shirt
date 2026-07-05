@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}GoalKit - ร้านเสื้อฟุตบอลออนไลน์{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>⚽ ร้านเสื้อฟุตบอล GoalKit</h1>
+  <p>เสื้อฟุตบอลคุณภาพดี ทั้งแขนสั้นและแขนยาว ราคาเริ่มต้นแค่ 199 บาท</p>
+</section>
+
+<div class="filter-section">
+  <div class="filter-inner">
+    <span class="filter-label">กรองสินค้า:</span>
+    <a href="/" class="filter-btn {% if not filter_type %}active{% endif %}">ทั้งหมด</a>
+    <a href="/?filter_type=short" class="filter-btn {% if filter_type == 'short' %}active{% endif %}">👕 แขนสั้น</a>
+    <a href="/?filter_type=long" class="filter-btn {% if filter_type == 'long' %}active{% endif %}">🧥 แขนยาว</a>
+  </div>
+</div>
+
+<div class="products-section">
+  <h2 class="section-title">
+    {% if filter_type == 'short' %}เสื้อแขนสั้น
+    {% elif filter_type == 'long' %}เสื้อแขนยาว
+    {% else %}สินค้าทั้งหมด{% endif %}
+  </h2>
+
+  <div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+      <div class="product-image" style="background: linear-gradient(135deg, {{ product.color }}22, {{ product.color }}44);">
+        {% if product.type == 'short' %}👕{% else %}🧥{% endif %}
+        <span class="product-badge">{{ product.badge }}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">{{ product.name }}</div>
+        <span class="product-type-tag">{% if product.type == 'short' %}แขนสั้น{% else %}แขนยาว{% endif %}</span>
+        <p class="product-desc">{{ product.description }}</p>
+        <div class="product-footer">
+          <div class="product-price">
+            ฿{{ "{:,}".format(product.price) }}
+            <span>บาท</span>
+          </div>
+          <a href="/product/{{ product.id }}" class="btn-detail">ดูรายละเอียด</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

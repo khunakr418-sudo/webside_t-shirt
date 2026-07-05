@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% from "partials/jersey.html" import jersey_svg %}
+{% block title %}ตะกร้าสินค้า — ProKit Sport{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">หน้าแรก</a> &rsaquo; ตะกร้าสินค้า
+</div>
+
+<div class="cart-page">
+  <h1>🛒 ตะกร้าสินค้า</h1>
+
+  {% if cart %}
+  <div class="cart-grid">
+
+    <!-- Items -->
+    <div>
+      <div class="cart-table">
+        <div class="cart-thead">
+          <span>สินค้า</span><span>ราคา/ตัว</span><span>จำนวน</span><span>ลบ</span>
+        </div>
+        {% for item in cart %}
+        <div class="cart-row">
+          <div class="cart-item-wrap">
+            <div class="cart-thumb" style="background:linear-gradient(135deg,{{ item.c1 }}22,{{ item.c1 }}44);">
+              {{ jersey_svg(item.c1, item.c2, item.c1, item.type, item.product_id|string, "ct") }}
+            </div>
+            <div>
+              <div class="cart-iname">{{ item.name }}</div>
+              <div class="cart-isize">ไซซ์: {{ item.size }}</div>
+            </div>
+          </div>
+          <div class="cart-price">฿{{ "{:,}".format(item.price) }}</div>
+          <form action="/cart/update" method="post" class="qty-form">
+            <input type="hidden" name="key" value="{{ item.key }}">
+            <input type="number" name="qty" value="{{ item.qty }}" min="1" max="99" class="qty-sm">
+            <button type="submit" class="btn-upd">OK</button>
+          </form>
+          <form action="/cart/remove" method="post">
+            <input type="hidden" name="key" value="{{ item.key }}">
+            <button type="submit" class="btn-rm" title="ลบ">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4h6v2"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="cart-summary">
+      <div class="summary-head">🧾 สรุปคำสั่งซื้อ</div>
+      <div class="summary-body">
+        {% for item in cart %}
+        <div class="summary-row">
+          <span>{{ item.name }} ({{ item.size }}) ×{{ item.qty }}</span>
+          <span>฿{{ "{:,}".format(item.price * item.qty) }}</span>
+        </div>
+        {% endfor %}
+        <div class="summary-row">
+          <span>ค่าจัดส่ง</span>
+          <span style="color:#009688;font-weight:700;">ฟรี</span>
+        </div>
+        <div class="summary-total">
+          <span>ยอดรวม</span>
+          <span>฿{{ "{:,}".format(total) }}</span>
+        </div>
+        <a href="/order/checkout" class="btn-checkout">ดำเนินการสั่งซื้อ →</a>
+        <a href="/shop/" class="btn-continue">← ช้อปต่อ</a>
+      </div>
+    </div>
+
+  </div>
+
+  {% else %}
+  <div class="empty-cart">
+    <svg width="64" height="64" fill="none" stroke="#bdbdbd" stroke-width="1.5" viewBox="0 0 24 24">
+      <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+    </svg>
+    <h2>ตะกร้าของคุณว่างเปล่า</h2>
+    <p>เลือกสินค้าที่ต้องการแล้วเพิ่มลงตะกร้าได้เลย</p>
+    <a href="/shop/" class="btn-read">ดูสินค้าทั้งหมด</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "partials/jersey.html" import jersey_svg %}
+{% block title %}{{ product.brand }} {{ product.name }} — ProKit Sport{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <a href="/">หน้าแรก</a> &rsaquo; <a href="/shop/">สินค้า</a> &rsaquo; {{ product.brand }} {{ product.name }}
+</div>
+
+<div class="page-wrap">
+  <div class="main-content">
+    <a href="/shop/" class="back-link">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      กลับไปยังสินค้าทั้งหมด
+    </a>
+
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <h1>{{ product.brand }} {{ product.name }} | {{ product.subtitle }}</h1>
+        <div class="post-meta">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Posted on <a href="#">14 มิถุนายน 2026</a> by <a href="#">admin</a>
+          &nbsp;|&nbsp; หมวดหมู่: {% if product.type=='short' %}เสื้อแขนสั้น{% else %}เสื้อแขนยาว{% endif %}
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <!-- Jersey Image -->
+        <div class="detail-img" style="background:linear-gradient(135deg,{{ product.c1 }}15,{{ product.c2 }}30);">
+          {{ jersey_svg(product.c1, product.c2, product.c3, product.type, product.id|string, "dtl") }}
+        </div>
+
+        <!-- Info & Form -->
+        <div class="detail-info">
+          <div class="detail-price-box">
+            <div class="detail-price-label">ราคาขายส่ง</div>
+            <div class="detail-price-val">฿{{ "{:,}".format(product.price) }}</div>
+            <div class="detail-price-note">✅ ส่งฟรีทั่วไทย · รับประกันคุณภาพ</div>
+          </div>
+
+          <div class="feature-chips">
+            {% for f in product.features %}<span class="chip">✓ {{ f }}</span>{% endfor %}
+          </div>
+
+          <form action="/cart/add" method="post">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+
+            <div class="size-label">เลือกไซซ์</div>
+            <div class="size-grid" style="margin-bottom:16px;">
+              {% for s in sizes %}
+              <input type="radio" name="size" id="sz_{{ s }}" value="{{ s }}" class="size-opt" {% if s=='M' %}checked{% endif %}>
+              <label for="sz_{{ s }}">{{ s }}</label>
+              {% endfor %}
+            </div>
+
+            <div class="qty-row" style="margin-bottom:16px;">
+              <label>จำนวน</label>
+              <input type="number" name="qty" value="1" min="1" max="99" class="qty-input">
+            </div>
+
+            <button type="submit" class="btn-cart">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              เพิ่มลงตะกร้า
+            </button>
+          </form>
+
+          <div class="detail-specs">
+            <div class="spec-row"><span class="spec-key">วัสดุ</span><span class="spec-val">{{ product.material }}</span></div>
+            <div class="spec-row"><span class="spec-key">การดูแลรักษา</span><span class="spec-val">{{ product.care }}</span></div>
+            <div class="spec-row"><span class="spec-key">ประเภท</span><span class="spec-val">{% if product.type=='short' %}เสื้อแขนสั้น{% else %}เสื้อแขนยาว{% endif %}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="widget">
+      <div class="widget-title">🛒 สินค้าอื่น ๆ</div>
+      <div class="widget-body" style="padding:10px 12px;">
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:10px;">สินค้าที่คุณอาจสนใจ</p>
+        <a href="/shop/" class="btn-read" style="display:block;text-align:center;">ดูสินค้าทั้งหมด</a>
+      </div>
+    </div>
+    <div class="widget">
+      <div class="widget-title">💳 วิธีชำระเงิน</div>
+      <div class="widget-body" style="font-size:0.85rem;color:var(--muted);line-height:2;">
+        ✅ โอนเงินธนาคาร<br>✅ PromptPay<br>✅ COD ปลายทาง
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
