@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}ติดต่อเรา — Khunakorn Sport{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section class="contact-hero">
+  <div class="contact-hero-inner">
+    <div class="lp-sec-label">ติดต่อเรา</div>
+    <h1 class="lp-sec-title">พร้อมช่วยเหลือคุณทุกช่องทาง</h1>
+    <p class="lp-sec-sub">แชทสอบถามไซซ์ สั่งซื้อจำนวนมาก หรือติดตามคำสั่งซื้อ · ทีมงานตอบไวทุกวัน</p>
+    <div class="contact-hero-quick">
+      <a href="tel:02XXXXXXX" class="chq">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.72 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+        โทร 02-XXX-XXXX
+      </a>
+      <a href="#form" class="chq chq-alt">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        ส่งข้อความหาเรา
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SOCIAL CHANNELS ═══ -->
+<section class="contact-socials">
+  <div class="contact-socials-inner">
+
+    <a href="#" target="_blank" rel="noopener" class="contact-social-card cs-line">
+      <span class="cs-icon">
+        <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.53 2.16 6.6 5.37 8.34L6 22l3.19-1.67C10.04 20.72 11 21 12 21c5.52 0 10-4.02 10-9S17.52 2 12 2z"/></svg>
+      </span>
+      <span class="cs-name">LINE</span>
+      <span class="cs-handle">@khunakornsport</span>
+      <span class="cs-tagline">Line@ ทักแชท สอบถามไซซ์ได้เลย 💬</span>
+    </a>
+
+    <a href="#" target="_blank" rel="noopener" class="contact-social-card cs-tiktok">
+      <span class="cs-icon">
+        <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+      </span>
+      <span class="cs-name">TikTok</span>
+      <span class="cs-handle">@khunakornsport</span>
+      <span class="cs-tagline">ตามคลิปใหม่ๆ ได้ที่ TikTok 🎵</span>
+    </a>
+
+    <a href="#" target="_blank" rel="noopener" class="contact-social-card cs-facebook">
+      <span class="cs-icon">
+        <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </span>
+      <span class="cs-name">Facebook</span>
+      <span class="cs-handle">Khunakorn Sport</span>
+      <span class="cs-tagline">กด เพจ Facebook ของเรา 📘</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ═══ MAIN: FORM + INFO ═══ -->
+<section class="contact-main" id="form">
+  <div class="contact-main-inner">
+
+    <!-- FORM -->
+    <div class="contact-form-card">
+      <div class="cfc-head">
+        <h2>ส่งข้อความถึงเรา</h2>
+        <p>กรอกรายละเอียด ทีมงานจะติดต่อกลับโดยเร็วที่สุด</p>
+      </div>
+
+      {% if sent %}
+      <div class="contact-alert">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>ส่งข้อความเรียบร้อยแล้ว! ทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง ขอบคุณค่ะ 🙏</span>
+      </div>
+      {% endif %}
+
+      <form action="/contact/send" method="post" class="contact-form">
+        <div class="cf-row">
+          <div class="form-group">
+            <label>ชื่อ-นามสกุล <span>*</span></label>
+            <input type="text" name="name" placeholder="เช่น สมชาย ใจดี" required>
+          </div>
+          <div class="form-group">
+            <label>เบอร์โทร / อีเมล / LINE ID <span>*</span></label>
+            <input type="text" name="contact" placeholder="ช่องทางที่ให้เราติดต่อกลับ" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>เรื่องที่ต้องการติดต่อ</label>
+          <select name="topic">
+            <option value="สอบถามสินค้า">สอบถามสินค้า / ไซซ์</option>
+            <option value="สั่งซื้อจำนวนมาก">สั่งซื้อจำนวนมาก (ทีม/องค์กร)</option>
+            <option value="สกรีนชื่อ-เบอร์">สกรีนชื่อ-เบอร์ / โลโก้</option>
+            <option value="ติดตามคำสั่งซื้อ">ติดตามคำสั่งซื้อ</option>
+            <option value="เปลี่ยน/คืนสินค้า">เปลี่ยน / คืนสินค้า</option>
+            <option value="ทั่วไป">อื่นๆ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ข้อความ <span>*</span></label>
+          <textarea name="message" placeholder="รายละเอียดที่ต้องการสอบถาม เช่น รุ่นสินค้า จำนวน ไซซ์ ฯลฯ" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="vertical-align:-2px;margin-right:6px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          ส่งข้อความ
+        </button>
+      </form>
+    </div>
+
+    <!-- INFO SIDEBAR -->
+    <aside class="contact-side">
+      <div class="contact-info-card">
+        <h3>ข้อมูลติดต่อ</h3>
+        <ul>
+          <li>
+            <span class="ci-ic"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.72 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.63 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></span>
+            <div><strong>โทรศัพท์</strong><span>02-XXX-XXXX</span></div>
+          </li>
+          <li>
+            <span class="ci-ic"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            <div><strong>อีเมล</strong><span>support@khunakorn.th</span></div>
+          </li>
+          <li>
+            <span class="ci-ic"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <div><strong>ที่อยู่</strong><span>123 ถนนสุขุมวิท แขวงคลองเตย<br>เขตคลองเตย กรุงเทพฯ 10110</span></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="contact-info-card">
+        <h3>เวลาทำการ</h3>
+        <ul class="hours-list">
+          <li><span>จันทร์ – ศุกร์</span><b>09:00 – 18:00</b></li>
+          <li><span>เสาร์</span><b>10:00 – 16:00</b></li>
+          <li><span>อาทิตย์ / วันหยุด</span><b class="closed">ปิดทำการ</b></li>
+        </ul>
+        <div class="hours-note">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          แชท LINE / เพจ ตอบนอกเวลาทำการด้วยนะคะ
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ═══ MAP ═══ -->
+<section class="contact-map-sec">
+  <div class="contact-map-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">แผนที่ร้าน</div>
+      <h2 class="lp-sec-title">มาเยี่ยมหน้าร้านเราได้</h2>
+      <p class="lp-sec-sub">ที่จอดรถสะดวก ใกล้ BTS · เปิดให้เลือกสินค้าและลองไซซ์ก่อนซื้อ</p>
+    </div>
+    <a href="https://www.google.com/maps/search/?api=1&query=Bangkok" target="_blank" rel="noopener" class="contact-map-frame">
+      <div class="cmf-grid"></div>
+      <div class="cmf-pin">
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div class="cmf-card">
+        <strong>Khunakorn Sport</strong>
+        <span>123 ถนนสุขุมวิท คลองเตย กรุงเทพฯ 10110</span>
+        <span class="cmf-open">เปิดใน Google Maps →</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="lp-faq">
+  <div class="lp-faq-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">คำถามก่อนติดต่อ</div>
+      <h2 class="lp-sec-title">อาจมีคำตอบให้คุณแล้ว</h2>
+      <p class="lp-sec-sub">เช็กคำถามที่ลูกค้าถามบ่อยก่อนได้ ประหยัดเวลาทั้งคุณและเรา</p>
+    </div>
+    <div class="lp-faq-list">
+      <details class="lp-faq-item" open>
+        <summary><span>ทีมงานตอบกลับเร็วแค่ไหน?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">ในเวลาทำการ (จ–ศ 09:00–18:00) ทีมงานตอบแชทภายใน 30 นาที ส่วนข้อความผ่านฟอร์มติดต่อกลับภายใน 24 ชั่วโมง</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>สั่งซื้อจำนวนมากติดต่อช่องทางไหน?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">แนะนำทัก LINE @khunakornsport หรือกรอกฟอร์มด้านบนโดยเลือกหัวข้อ "สั่งซื้อจำนวนมาก" ทีมงานจะเสนอราคาพิเศษสำหรับทีม/องค์กรให้</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>ขอใบเสนอราคา / ใบกำกับภาษีได้ไหม?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">ได้ครับ/ค่ะ รองรับทั้งใบเสนอราคาและใบกำกับภาษีเต็มรูปแบบ แจ้งความต้องการมาในข้อความ พร้อมชื่อ-ที่อยู่สำหรับออกเอกสาร</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>ติดตามสถานะพัสดุอย่างไร?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">หลังจัดส่ง ทีมงานจะแจ้งเลขพัสดุทาง LINE/SMS สามารถแจ้งเลขคำสั่งซื้อเข้ามาเพื่อให้เราตรวจสอบสถานะให้ได้ทันที</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="lp-cta-banner">
+  <h2>ยังไม่แน่ใจ? ทักมาคุยกันก่อนได้</h2>
+  <p>ทีมงานยินดีให้คำแนะนำ เลือกไซซ์ เลือกรุ่น ฟรี ไม่มีข้อผูกมัด</p>
+  <div class="lp-cta-banner-btns">
+    <a href="#" class="lp-cta-wl">💬 แชท LINE</a>
+    <a href="tel:02XXXXXXX" class="lp-cta-line">📞 โทรหาเรา</a>
+  </div>
+</section>
+
+{% endblock %}

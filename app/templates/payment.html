@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}วิธีการชำระเงิน — Khunakorn Sport{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section class="pay-hero">
+  <div class="pay-hero-inner">
+    <div class="lp-sec-label">วิธีการชำระเงิน</div>
+    <h1 class="lp-sec-title">ชำระเงินง่าย ปลอดภัย ทุกช่องทาง</h1>
+    <p class="lp-sec-sub">โอนผ่านธนาคาร · สแกน PromptPay · หรือเก็บเงินปลายทาง (COD) · แจ้งสลิปแล้วจัดส่งทันที</p>
+    <div class="pay-hero-badges">
+      <span>🔒 ปลอดภัย 100%</span>
+      <span>⚡ ยืนยันไว</span>
+      <span>🚚 ส่งฟรีทั่วไทย</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ METHODS ═══ -->
+<section class="pay-methods">
+  <div class="pay-methods-inner">
+
+    <!-- LEFT: bank + promptpay -->
+    <div class="pay-left">
+
+      <div class="pay-block">
+        <div class="pay-block-head">
+          <span class="pbh-ic">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </span>
+          <div><h2>โอนเงินผ่านธนาคาร</h2><p>โอนแล้วแนบสลิปในแบบฟอร์มด้านล่างได้เลย</p></div>
+        </div>
+
+        <div class="bank-grid">
+          {% for a in accounts %}
+          <div class="bank-card">
+            <div class="bank-top">
+              <span class="bank-logo" style="background:{{ a.color }};">{{ a.short }}</span>
+              <div class="bank-name">
+                <strong>{{ a.bank }}</strong>
+                <span>{{ a.type }} · {{ a.branch }}</span>
+              </div>
+            </div>
+            <div class="bank-acc">
+              <div class="bank-acc-no" data-acc="{{ a.number|replace('-','') }}">{{ a.number }}</div>
+              <button type="button" class="copy-btn" data-copy="{{ a.number|replace('-','') }}">คัดลอก</button>
+            </div>
+            <div class="bank-holder">ชื่อบัญชี: {{ a.name }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="pay-block">
+        <div class="pay-block-head">
+          <span class="pbh-ic">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><line x1="14" y1="14" x2="14" y2="21"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="17.5" y1="17.5" x2="17.5" y2="17.5"/></svg>
+          </span>
+          <div><h2>สแกนจ่ายด้วย PromptPay</h2><p>เปิดแอปธนาคาร แล้วสแกน QR ด้านล่าง</p></div>
+        </div>
+
+        <div class="promptpay-card">
+          <div class="pp-brand">
+            <span class="pp-logo">พร้อมเพย์ <b>PromptPay</b></span>
+          </div>
+          <div class="pp-qr">
+            <div id="ppqr" data-payload="{{ promptpay_payload }}"></div>
+            <div class="pp-qr-fallback">QR สแกนไม่ขึ้น? โอนที่เบอร์<br><b>{{ promptpay_id }}</b></div>
+          </div>
+          <div class="pp-info">
+            <div class="pp-name">{{ promptpay_name }}</div>
+            <div class="pp-id">
+              <span data-acc="{{ promptpay_id }}">{{ promptpay_id }}</span>
+              <button type="button" class="copy-btn" data-copy="{{ promptpay_id }}">คัดลอกเบอร์</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-block">
+        <div class="pay-block-head">
+          <span class="pbh-ic">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </span>
+          <div><h2>เก็บเงินปลายทาง (COD)</h2><p>จ่ายเงินสดกับพนักงานส่งของเมื่อได้รับสินค้า ไม่ต้องโอนก่อน</p></div>
+        </div>
+        <div class="cod-note">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          เลือก "เก็บเงินปลายทาง" ในขั้นตอนสั่งซื้อได้เลย — เปิดกล่องตรวจสินค้าก่อนชำระได้
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: steps + notify form -->
+    <aside class="pay-right" id="notify">
+
+      <div class="pay-steps-card">
+        <h3>ขั้นตอนการชำระเงิน</h3>
+        <ol class="pay-steps">
+          <li><span>1</span><div><strong>เลือกสินค้า &amp; สั่งซื้อ</strong>ใส่ตะกร้าและยืนยันคำสั่งซื้อ</div></li>
+          <li><span>2</span><div><strong>โอน / สแกนจ่าย</strong>ตามยอดในหน้าสรุปคำสั่งซื้อ</div></li>
+          <li><span>3</span><div><strong>แจ้งชำระเงิน</strong>กรอกฟอร์มและแนบสลิปด้านล่าง</div></li>
+          <li><span>4</span><div><strong>รอรับสินค้า</strong>จัดส่งภายใน 48 ชม. พร้อมเลขพัสดุ</div></li>
+        </ol>
+      </div>
+
+      <div class="notify-card">
+        <div class="notify-head">
+          <h3>แจ้งชำระเงิน / แนบสลิป</h3>
+          <p>โอนแล้วแจ้งที่นี่ เพื่อยืนยันและจัดส่งเร็วขึ้น</p>
+        </div>
+
+        {% if done %}
+        <div class="contact-alert">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>รับแจ้งชำระเงินแล้ว! ทีมงานกำลังตรวจสอบสลิป และจะจัดส่งให้เร็วที่สุด 🙏</span>
+        </div>
+        {% endif %}
+
+        <form action="/payment/notify" method="post" enctype="multipart/form-data" class="notify-form">
+          <div class="cf-row">
+            <div class="form-group">
+              <label>เลขคำสั่งซื้อ</label>
+              <input type="text" name="order_id" placeholder="เช่น #KS-1024">
+            </div>
+            <div class="form-group">
+              <label>ยอดที่โอน (บาท) <span>*</span></label>
+              <input type="number" name="amount" min="1" step="1" placeholder="เช่น 598" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>ช่องทางที่ชำระ</label>
+            <select name="method">
+              <option value="โอนธนาคาร">โอนผ่านธนาคาร</option>
+              <option value="PromptPay">สแกน PromptPay</option>
+              <option value="COD">เก็บเงินปลายทาง (COD)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>แนบสลิปการโอน</label>
+            <label class="file-drop">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span class="fd-text">แตะเพื่อเลือกรูปสลิป (JPG/PNG)</span>
+              <input type="file" name="slip" accept="image/*" hidden>
+            </label>
+          </div>
+          <button type="submit" class="btn-submit">✅ ยืนยันการชำระเงิน</button>
+        </form>
+      </div>
+
+    </aside>
+
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="lp-faq">
+  <div class="lp-faq-inner">
+    <div class="lp-sec-header">
+      <div class="lp-sec-label">คำถามเรื่องการชำระเงิน</div>
+      <h2 class="lp-sec-title">ข้อสงสัยที่พบบ่อย</h2>
+    </div>
+    <div class="lp-faq-list">
+      <details class="lp-faq-item" open>
+        <summary><span>โอนแล้วต้องแจ้งไหม?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">แนะนำให้แจ้งชำระเงินพร้อมแนบสลิปในฟอร์มด้านบน หรือทัก LINE @khunakornsport เพื่อให้ทีมงานยืนยันและจัดส่งได้เร็วขึ้น</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>สแกน PromptPay แล้วยอดไม่ขึ้น ทำอย่างไร?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">QR นี้เป็นแบบระบุปลายทาง คุณกรอกยอดเองในแอปธนาคารได้ตามยอดคำสั่งซื้อ หรือโอนไปที่เบอร์พร้อมเพย์ {{ promptpay_id }} โดยตรง</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>ชำระเงินปลอดภัยไหม?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">บัญชีรับเงินเป็นชื่อนิติบุคคล "{{ promptpay_name }}" ตรวจสอบได้ และรองรับเก็บเงินปลายทาง (COD) หากไม่สะดวกโอนก่อน</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary><span>ออกใบกำกับภาษีได้ไหม?</span><span class="lp-faq-icon">+</span></summary>
+        <p class="lp-faq-answer">ได้ครับ/ค่ะ แจ้งชื่อ-ที่อยู่สำหรับออกเอกสารมาพร้อมการแจ้งชำระเงิน ทีมงานจะจัดส่งใบกำกับภาษีให้</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="lp-cta-banner">
+  <h2>พร้อมสั่งซื้อแล้วใช่ไหม?</h2>
+  <p>เลือกสินค้า ชำระเงินสะดวกทุกช่องทาง จัดส่งฟรีทั่วไทย</p>
+  <div class="lp-cta-banner-btns">
+    <a href="/shop/" class="lp-cta-wl">🛒 ดูสินค้าทั้งหมด</a>
+    <a href="/contact/" class="lp-cta-line">💬 สอบถามทีมงาน</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+  // ── render PromptPay QR ──
+  (function () {
+    var box = document.getElementById('ppqr');
+    if (!box || typeof qrcode === 'undefined') return;
+    try {
+      var qr = qrcode(0, 'M');
+      qr.addData(box.getAttribute('data-payload'));
+      qr.make();
+      box.innerHTML = qr.createSvgTag({ cellSize: 5, margin: 0, scalable: true });
+      var svg = box.querySelector('svg');
+      if (svg) { svg.style.width = '100%'; svg.style.height = '100%'; }
+    } catch (e) { box.style.display = 'none'; }
+  })();
+
+  // ── copy to clipboard ──
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-copy');
+      var done = function () {
+        var old = btn.textContent;
+        btn.textContent = '✓ คัดลอกแล้ว';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(done);
+      } else {
+        var t = document.createElement('textarea');
+        t.value = text; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(t); done();
+      }
+    });
+  });
+
+  // ── file name preview ──
+  (function () {
+    var input = document.querySelector('.file-drop input[type=file]');
+    if (!input) return;
+    input.addEventListener('change', function () {
+      var label = input.closest('.file-drop').querySelector('.fd-text');
+      if (input.files && input.files.length) {
+        label.textContent = '📎 ' + input.files[0].name;
+        input.closest('.file-drop').classList.add('has-file');
+      }
+    });
+  })();
+</script>
+{% endblock %}
