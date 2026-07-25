@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% from "partials/jersey.html" import jersey_svg %}
+{% block title %}จัดการรูปสินค้า — Admin{% endblock %}
+
+{% block content %}
+<div class="admin-wrap">
+
+  <div class="admin-head">
+    <h1>🖼️ จัดการรูปสินค้า (แกลเลอรี 4 รูป)</h1>
+    <p>อัปโหลดได้สินค้าละ 4 รูป · <b>รูปหลัก</b> (ช่องแรก) แสดงทุกหน้า · รูปที่ 2–4 แสดงเป็นแกลเลอรีในหน้าสินค้า · ช่องที่ว่างจะใช้ภาพ SVG แทน</p>
+  </div>
+
+  {% if ok %}
+  <div class="admin-flash ok">✅ บันทึกรูปของสินค้า #{{ ok }} เรียบร้อยแล้ว</div>
+  {% elif error == 'type' %}
+  <div class="admin-flash error">⚠️ ไฟล์ไม่ถูกต้อง — รองรับเฉพาะ .jpg .jpeg .png .webp .gif</div>
+  {% elif error == 'slot' %}
+  <div class="admin-flash error">⚠️ ช่องรูปไม่ถูกต้อง</div>
+  {% endif %}
+
+  <div class="admin-grid">
+    {% for p in products %}
+    {% set filled = p.images | select | list | length %}
+    <div class="admin-card">
+
+      <div class="admin-card-top">
+        <div class="admin-thumb">
+          {% if p.image %}
+          <img src="/static/images/products/{{ p.image }}" alt="{{ p.name }}">
+          {% else %}
+          {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "adm") }}
+          {% endif %}
+        </div>
+        <div class="admin-card-info">
+          <div class="admin-pid">สินค้า #{{ p.id }}</div>
+          <div class="admin-name">{{ p.brand }} {{ p.name }}</div>
+          <div class="admin-status {% if filled %}has{% else %}none{% endif %}">
+            ● มีรูป {{ filled }}/4
+          </div>
+          <a href="/shop/{{ p.id }}" target="_blank" class="admin-view-link">ดูหน้าสินค้า →</a>
+        </div>
+      </div>
+
+      <details class="admin-edit">
+        <summary>✏️ แก้ไขราคา &amp; รายละเอียดสินค้า</summary>
+        <form class="admin-edit-form" action="/admin/update" method="post">
+          <input type="hidden" name="product_id" value="{{ p.id }}">
+          <div class="ae-grid">
+            <label class="ae-full">ชื่อรุ่น
+              <input name="name" value="{{ p.name }}" required></label>
+            <label>แบรนด์
+              <input name="brand" value="{{ p.brand }}"></label>
+            <label>ประเภท
+              <select name="type">
+                <option value="short" {% if p.type=='short' %}selected{% endif %}>เสื้อแขนสั้น</option>
+                <option value="long" {% if p.type=='long' %}selected{% endif %}>เสื้อแขนยาว</option>
+              </select></label>
+            <label class="ae-full">คำโปรย (subtitle)
+              <input name="subtitle" value="{{ p.subtitle }}"></label>
+            <label class="ae-full">ป้าย (badge)
+              <input name="badge" value="{{ p.badge }}"></label>
+
+            <label>ราคาขาย (฿)
+              <input type="number" name="price" value="{{ p.price }}" min="0" required></label>
+            <label>ราคาเดิม (ขีดฆ่า)
+              <input type="number" name="old_price" value="{{ p.old_price }}" min="0"></label>
+            <label>ราคา 10–49 ตัว
+              <input type="number" name="bulk10" value="{{ p.bulk10 }}" min="0"></label>
+            <label>ราคา 50+ ตัว
+              <input type="number" name="bulk50" value="{{ p.bulk50 }}" min="0"></label>
+
+            <label>คะแนนดาว (0–5)
+              <input type="number" name="rating" value="{{ p.rating }}" min="0" max="5" step="0.1"></label>
+            <label>จำนวนรีวิว
+              <input type="number" name="reviews_count" value="{{ p.reviews_count }}" min="0"></label>
+            <label>ขายแล้ว (ตัว)
+              <input type="number" name="sold" value="{{ p.sold }}" min="0"></label>
+            <label>สต็อกคงเหลือ
+              <input type="number" name="stock" value="{{ p.stock }}" min="0"></label>
+
+            <label class="ae-full">จุดเด่น (บรรทัดละ 1 ข้อ)
+              <textarea name="features" rows="4">{% for f in p.features %}{{ f }}{% if not loop.last %}&#10;{% endif %}{% endfor %}</textarea></label>
+            <label class="ae-full">วัสดุ
+              <input name="material" value="{{ p.material }}"></label>
+            <label class="ae-full">การดูแลรักษา
+              <input name="care" value="{{ p.care }}"></label>
+
+            <div class="ae-full ae-colors">
+              <span class="ae-colors-label">สีธีมสินค้า (พื้นหลัง/ภาพ SVG):</span>
+              <label class="ae-color">หลัก <input type="color" name="c1" value="{{ p.c1 }}"></label>
+              <label class="ae-color">เข้ม <input type="color" name="c2" value="{{ p.c2 }}"></label>
+              <label class="ae-color">อ่อน <input type="color" name="c3" value="{{ p.c3 }}"></label>
+            </div>
+          </div>
+          <button type="submit" class="admin-btn ae-save">💾 บันทึกรายละเอียด</button>
+        </form>
+      </details>
+
+      <div class="admin-slots">
+        {% for slot in slots %}
+        {% set i = loop.index0 %}
+        {% set img = p.images[i] %}
+        <div class="admin-slot {% if i == 0 %}is-main{% endif %}">
+          <div class="admin-slot-thumb">
+            {% if img %}
+            <img src="/static/images/products/{{ img }}" alt="{{ slot.label }}">
+            {% else %}
+            <span class="slot-empty">ว่าง</span>
+            {% endif %}
+          </div>
+          <div class="admin-slot-body">
+            <div class="admin-slot-label">
+              {% if i == 0 %}⭐ {% endif %}{{ slot.label }}
+            </div>
+            <div class="admin-slot-hint">📍 {{ slot.hint }}</div>
+            <form class="admin-slot-form" action="/admin/upload" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="product_id" value="{{ p.id }}">
+              <input type="hidden" name="slot" value="{{ i }}">
+              <input class="admin-file" type="file" name="image"
+                     accept=".jpg,.jpeg,.png,.webp,.gif" required>
+              <div class="admin-actions">
+                <button type="submit" class="admin-btn">
+                  {% if img %}เปลี่ยน{% else %}อัปโหลด{% endif %}
+                </button>
+                {% if img %}
+                <button type="submit" class="admin-btn ghost" formaction="/admin/remove" formnovalidate
+                        onclick="return confirm('ลบรูปช่องนี้?');">ลบ</button>
+                {% endif %}
+              </div>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="admin-hint">แนะนำรูปสี่เหลี่ยมจัตุรัส ~800×800px · ไม่เกิน ~2MB ต่อรูป</div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

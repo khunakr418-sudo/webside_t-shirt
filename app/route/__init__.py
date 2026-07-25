@@ -4,5 +4,6 @@ from .cart import router as cart
 from .order import router as order
 from .contact import router as contact
 from .payment import router as payment
+from .admin import router as admin
 
-__all__ = ["landing", "shop", "cart", "order", "contact", "payment"]
+__all__ = ["landing", "shop", "cart", "order", "contact", "payment", "admin"]

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 
 from core import templates
-from data import PRODUCTS, SIZES, get_cart_count
+from data import PRODUCTS, SIZES, REVIEWS, get_cart_count, delivery_estimate
 
 router = APIRouter(prefix="/shop")
 
@@ -27,5 +27,7 @@ async def product_detail(request: Request, product_id: int):
     return templates.TemplateResponse(request, "product.html", {
         "product": product,
         "sizes": SIZES,
+        "reviews": REVIEWS.get(product_id, []),
+        "delivery": delivery_estimate(),
         "cart_count": get_cart_count(),
     })

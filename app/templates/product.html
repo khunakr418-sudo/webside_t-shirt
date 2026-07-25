@@ -7,6 +7,8 @@
   <a href="/">หน้าแรก</a> &rsaquo; <a href="/shop/">สินค้า</a> &rsaquo; {{ product.brand }} {{ product.name }}
 </div>
 
+{% set discount = ((1 - product.price / product.old_price) * 100) | round(0, 'floor') | int %}
+
 <div class="page-wrap">
   <div class="main-content">
     <a href="/shop/" class="back-link">
@@ -25,27 +27,93 @@
       </div>
 
       <div class="detail-body">
-        <!-- Jersey Image -->
-        <div class="detail-img" style="background:linear-gradient(135deg,{{ product.c1 }}15,{{ product.c2 }}30);">
-          {{ jersey_svg(product.c1, product.c2, product.c3, product.type, product.id|string, "dtl") }}
+        <!-- Gallery -->
+        {% set gallery = product.images | select | list %}
+        <div class="detail-gallery">
+          <div class="detail-img" style="background:linear-gradient(135deg,{{ product.c1 }}15,{{ product.c2 }}30);">
+            {% if discount > 0 %}<span class="detail-discount-badge">ลด {{ discount }}%</span>{% endif %}
+            {% if gallery %}
+            <img id="galleryMain" src="/static/images/products/{{ gallery[0] }}" alt="{{ product.brand }} {{ product.name }}" class="detail-photo">
+            {% else %}
+            {{ jersey_svg(product.c1, product.c2, product.c3, product.type, product.id|string, "dtl") }}
+            {% endif %}
+          </div>
+          {% if gallery | length > 1 %}
+          <div class="gallery-thumbs">
+            {% for img in gallery %}
+            <button type="button" class="gallery-thumb {% if loop.first %}active{% endif %}"
+                    data-src="/static/images/products/{{ img }}" aria-label="ดูรูปที่ {{ loop.index }}">
+              <img src="/static/images/products/{{ img }}" alt="">
+            </button>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
 
         <!-- Info & Form -->
         <div class="detail-info">
+
+          <!-- rating + social proof -->
+          <div class="detail-rating">
+            <span class="rating-stars">{{ "★" * (product.rating | round(0, 'common') | int) }}</span>
+            <b>{{ product.rating }}</b>
+            <span class="rating-sep">·</span>
+            <a href="#reviews">{{ product.reviews_count }} รีวิว</a>
+            <span class="rating-sep">·</span>
+            <span class="rating-sold">🔥 ขายแล้ว {{ "{:,}".format(product.sold) }} ตัว</span>
+          </div>
+
           <div class="detail-price-box">
             <div class="detail-price-label">ราคาขายส่ง</div>
-            <div class="detail-price-val">฿{{ "{:,}".format(product.price) }}</div>
-            <div class="detail-price-note">✅ ส่งฟรีทั่วไทย · รับประกันคุณภาพ</div>
+            <div class="detail-price-main">
+              <span class="detail-price-val">฿{{ "{:,}".format(product.price) }}</span>
+              {% if product.old_price and product.old_price > product.price %}
+              <span class="detail-price-old">฿{{ "{:,}".format(product.old_price) }}</span>
+              <span class="detail-price-save">ประหยัด ฿{{ "{:,}".format(product.old_price - product.price) }}</span>
+              {% endif %}
+            </div>
+            <div class="detail-price-note">✅ ส่งฟรีทั่วไทย · รับประกันคุณภาพ · เก็บเงินปลายทางได้</div>
+          </div>
+
+          <!-- urgency: stock + delivery -->
+          <div class="detail-urgency">
+            {% if product.stock <= 20 %}
+            <div class="urg-item urg-hot">⚠️ เหลือเพียง {{ product.stock }} ตัว — รีบสั่งก่อนของหมด!</div>
+            {% else %}
+            <div class="urg-item">🟢 พร้อมส่ง · มีสินค้าในสต็อก {{ product.stock }} ตัว</div>
+            {% endif %}
+            <div class="urg-item">🚚 สั่งภายในวันนี้ คาดว่าได้รับ <b>{{ delivery }}</b></div>
           </div>
 
           <div class="feature-chips">
             {% for f in product.features %}<span class="chip">✓ {{ f }}</span>{% endfor %}
           </div>
 
+          <!-- wholesale tier pricing -->
+          <div class="bulk-box">
+            <div class="bulk-title">💰 ยิ่งสั่งมาก ยิ่งถูก (ราคาต่อตัว)</div>
+            <div class="bulk-tiers">
+              <div class="bulk-tier">
+                <span class="bulk-qty">1–9 ตัว</span>
+                <span class="bulk-price">฿{{ "{:,}".format(product.price) }}</span>
+              </div>
+              <div class="bulk-tier">
+                <span class="bulk-qty">10–49 ตัว</span>
+                <span class="bulk-price">฿{{ "{:,}".format(product.bulk10) }}</span>
+                <span class="bulk-save">−฿{{ product.price - product.bulk10 }}</span>
+              </div>
+              <div class="bulk-tier bulk-best">
+                <span class="bulk-qty">50 ตัวขึ้นไป</span>
+                <span class="bulk-price">฿{{ "{:,}".format(product.bulk50) }}</span>
+                <span class="bulk-save">−฿{{ product.price - product.bulk50 }}</span>
+              </div>
+            </div>
+          </div>
+
           <form action="/cart/add" method="post">
             <input type="hidden" name="product_id" value="{{ product.id }}">
 
-            <div class="size-label">เลือกไซซ์</div>
+            <div class="size-label">เลือกไซซ์ <a href="#sizeguide" class="size-guide-link">📏 ตารางไซซ์</a></div>
             <div class="size-grid" style="margin-bottom:16px;">
               {% for s in sizes %}
               <input type="radio" name="size" id="sz_{{ s }}" value="{{ s }}" class="size-opt" {% if s=='M' %}checked{% endif %}>
@@ -64,6 +132,19 @@
             </button>
           </form>
 
+          <!-- team / wholesale CTA -->
+          <a href="/contact/" class="team-cta">
+            🏆 สั่งเป็นทีม 10 ตัวขึ้นไป? รับส่วนลดพิเศษ + สกรีนชื่อ-เบอร์ฟรี — ติดต่อเรา →
+          </a>
+
+          <!-- trust badges -->
+          <div class="trust-badges">
+            <div class="trust-badge"><span>🚚</span> ส่งฟรีทั่วไทย</div>
+            <div class="trust-badge"><span>🛡️</span> รับประกัน 30 วัน</div>
+            <div class="trust-badge"><span>✅</span> ของแท้ 100%</div>
+            <div class="trust-badge"><span>💵</span> เก็บเงินปลายทาง</div>
+          </div>
+
           <div class="detail-specs">
             <div class="spec-row"><span class="spec-key">วัสดุ</span><span class="spec-val">{{ product.material }}</span></div>
             <div class="spec-row"><span class="spec-key">การดูแลรักษา</span><span class="spec-val">{{ product.care }}</span></div>
@@ -72,6 +153,57 @@
         </div>
       </div>
     </div>
+
+    <!-- SIZE GUIDE -->
+    <details class="size-guide-card" id="sizeguide">
+      <summary>📏 ตารางไซซ์ (อก × ยาว) — เทียบก่อนสั่งให้พอดีตัว</summary>
+      <div class="size-guide-body">
+        <table class="size-table">
+          <thead>
+            <tr><th>ไซซ์</th><th>รอบอก (นิ้ว)</th><th>ความยาว (นิ้ว)</th><th>เหมาะกับ (น้ำหนัก)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>S</td><td>36</td><td>26</td><td>45–52 กก.</td></tr>
+            <tr><td>M</td><td>38</td><td>27</td><td>53–62 กก.</td></tr>
+            <tr><td>L</td><td>40</td><td>28</td><td>63–72 กก.</td></tr>
+            <tr><td>XL</td><td>42</td><td>29</td><td>73–82 กก.</td></tr>
+            <tr><td>XXL</td><td>44</td><td>30</td><td>83–92 กก.</td></tr>
+          </tbody>
+        </table>
+        <p class="size-guide-note">* ค่าคลาดเคลื่อนได้ ±1 นิ้ว · ไม่แน่ใจไซซ์ไหน ทักแชทถามทีมงานได้ฟรี</p>
+      </div>
+    </details>
+
+    <!-- REVIEWS -->
+    <section class="reviews-section" id="reviews">
+      <div class="reviews-head">
+        <h2>⭐ รีวิวจากผู้ซื้อจริง</h2>
+        <div class="reviews-summary">
+          <span class="reviews-big">{{ product.rating }}</span>
+          <div>
+            <div class="rating-stars">{{ "★" * (product.rating | round(0, 'common') | int) }}</div>
+            <div class="reviews-count-text">จาก {{ product.reviews_count }} รีวิว</div>
+          </div>
+        </div>
+      </div>
+      <div class="reviews-list">
+        {% for r in reviews %}
+        <div class="review-card">
+          <div class="review-top">
+            <div class="review-avatar">{{ r.name[0] }}</div>
+            <div>
+              <div class="review-name">{{ r.name }} <span class="review-verified">✓ ผู้ซื้อจริง</span></div>
+              <div class="review-role">{{ r.role }} · ไซซ์ {{ r.size }}</div>
+            </div>
+            <div class="review-stars">{{ "★" * r.stars }}{{ "☆" * (5 - r.stars) }}</div>
+          </div>
+          <p class="review-text">{{ r.text }}</p>
+        </div>
+        {% else %}
+        <p class="reviews-empty">ยังไม่มีรีวิวสำหรับสินค้านี้ — เป็นคนแรกที่รีวิวได้เลย!</p>
+        {% endfor %}
+      </div>
+    </section>
   </div>
 
   <aside class="sidebar">
@@ -90,4 +222,21 @@
     </div>
   </aside>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var main = document.getElementById('galleryMain');
+    if (!main) return;
+    var thumbs = document.querySelectorAll('.gallery-thumb');
+    thumbs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        main.src = btn.getAttribute('data-src');
+        thumbs.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+  })();
+</script>
 {% endblock %}

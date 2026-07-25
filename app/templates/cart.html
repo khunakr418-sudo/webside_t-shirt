@@ -23,7 +23,12 @@
         <div class="cart-row">
           <div class="cart-item-wrap">
             <div class="cart-thumb" style="background:linear-gradient(135deg,{{ item.c1 }}22,{{ item.c1 }}44);">
+              {% set img = product_images.get(item.product_id) %}
+              {% if img %}
+              <img src="/static/images/products/{{ img }}" alt="{{ item.name }}" class="cart-thumb-photo">
+              {% else %}
               {{ jersey_svg(item.c1, item.c2, item.c1, item.type, item.product_id|string, "ct") }}
+              {% endif %}
             </div>
             <div>
               <div class="cart-iname">{{ item.name }}</div>

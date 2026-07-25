@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from route import landing, shop, cart, order, contact, payment
+from route import landing, shop, cart, order, contact, payment, admin
 
 app = FastAPI(title="Khunakorn Football Shop")
 
@@ -19,3 +19,4 @@ app.include_router(cart)
 app.include_router(order)
 app.include_router(contact)
 app.include_router(payment)
+app.include_router(admin)

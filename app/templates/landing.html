@@ -46,7 +46,11 @@
         {% for p in products %}
         <a href="/shop/{{ p.id }}" class="lp-jersey-card lp-jc-{{ loop.index }}" style="--glow:{{ p.c1 }}55;">
           <div class="lp-jersey-wrap" style="background:linear-gradient(135deg,{{ p.c1 }}22,{{ p.c2 }}44);">
+            {% if p.image %}
+            <img src="/static/images/products/{{ p.image }}" alt="{{ p.brand }} {{ p.name }}" class="lp-jersey-photo">
+            {% else %}
             {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "hr") }}
+            {% endif %}
           </div>
           <div class="lp-jersey-name">{{ p.brand }} {{ p.name }}</div>
           <div class="lp-jersey-price">฿{{ "{:,}".format(p.price) }}</div>
@@ -212,7 +216,11 @@
       {% for p in products %}
       <a href="/shop/{{ p.id }}" class="lp-prod-card">
         <div class="lp-prod-thumb" style="background:linear-gradient(135deg,{{ p.c1 }}18,{{ p.c2 }}35);">
+          {% if p.image %}
+          <img src="/static/images/products/{{ p.image }}" alt="{{ p.brand }} {{ p.name }}" class="lp-prod-photo">
+          {% else %}
           {{ jersey_svg(p.c1, p.c2, p.c3, p.type, p.id|string, "lp") }}
+          {% endif %}
           <span class="lp-prod-badge">{{ p.badge }}</span>
         </div>
         <div class="lp-prod-body">

@@ -9,10 +9,12 @@ router = APIRouter(prefix="/cart")
 
 @router.get("/", response_class=HTMLResponse)
 async def view_cart(request: Request):
+    product_images = {p["id"]: p.get("image") for p in PRODUCTS}
     return templates.TemplateResponse(request, "cart.html", {
         "cart": cart,
         "cart_count": get_cart_count(),
         "total": get_cart_total(),
+        "product_images": product_images,
     })
 
 
