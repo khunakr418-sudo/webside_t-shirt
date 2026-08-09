@@ -1,8 +1,12 @@
 from fastapi import APIRouter, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+import notify
+import storage
 from core import templates
 from data import get_cart_count
+
+from .order import my_order_numbers
 
 router = APIRouter(prefix="/payment")
 
@@ -75,23 +79,50 @@ def build_promptpay_payload(mobile: str, amount: float | None = None) -> str:
 
 
 @router.get("/", response_class=HTMLResponse)
-async def payment(request: Request, done: int = 0):
+async def payment(request: Request, done: int = 0, error: str = None,
+                  unmatched: str = None):
+    # คำสั่งซื้อของลูกค้าคนนี้ที่ยังไม่ได้ยืนยันการชำระ -> ให้เลือกจากรายการแทนการพิมพ์
+    my_orders = [o for o in storage.get_orders(my_order_numbers(request))
+                 if o.get("status") != "paid"]
     return templates.TemplateResponse(request, "payment.html", {
-        "cart_count": get_cart_count(),
+        "cart_count": get_cart_count(request),
         "accounts": BANK_ACCOUNTS,
         "promptpay_id": PROMPTPAY_ID,
         "promptpay_name": PROMPTPAY_NAME,
         "promptpay_payload": build_promptpay_payload(PROMPTPAY_ID),
         "done": bool(done),
+        "error": error,
+        "unmatched": unmatched,
+        "my_orders": my_orders,
     })
 
 
 @router.post("/notify")
 async def payment_notify(
     order_id: str = Form(""),
+    order_id_manual: str = Form(""),
     amount: str = Form(""),
     method: str = Form("โอนธนาคาร"),
     slip: UploadFile = File(None),
 ):
-    # เดโม: รับแจ้งชำระเงินแล้วส่งกลับหน้าเดิมพร้อมสถานะสำเร็จ
+    # เลขที่พิมพ์เองมาก่อนเสมอ (ใช้เมื่อสั่งจากเครื่องอื่นหรือช่องทางอื่น)
+    entered = storage.normalize_order_no(order_id_manual or order_id)
+
+    slip_file, err = await storage.save_slip(slip)
+    if err:
+        return RedirectResponse(url=f"/payment/?error={err}#notify", status_code=303)
+
+    payment, order = storage.save_payment(
+        order_id=entered,
+        amount=amount.strip(),
+        method=method.strip() or "โอนธนาคาร",
+        slip_file=slip_file,
+    )
+    notify.new_payment(payment, order)
+
+    # เลขที่ไม่ตรงกับคำสั่งซื้อใด -> รับเรื่องไว้ แต่บอกลูกค้าว่าจะตรวจสอบให้เอง
+    if entered and not order:
+        return RedirectResponse(
+            url=f"/payment/?done=1&unmatched={entered}#notify", status_code=303
+        )
     return RedirectResponse(url="/payment/?done=1#notify", status_code=303)

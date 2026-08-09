@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block title %}คำสั่งซื้อ &amp; ข้อความ — Admin{% endblock %}
+
+{% macro when(ts) -%}
+{{ ts[:16].replace('T', ' ') if ts else '—' }}
+{%- endmacro %}
+
+{% block content %}
+<div class="admin-wrap">
+
+  <div class="admin-head">
+    <h1>📋 คำสั่งซื้อ &amp; ข้อความจากลูกค้า</h1>
+    <p>
+      ข้อมูลทั้งหมดถูกบันทึกไว้ในโฟลเดอร์ <code>app/_data/</code> ของเซิร์ฟเวอร์ ·
+      แจ้งเตือน:
+      {%- if notify_channels %} {{ notify_channels | join(' · ') }}
+      {%- else %} ยังไม่ได้ตั้งค่า{% endif %}
+    </p>
+  </div>
+
+  {% if notify_test_ok %}
+  <div class="admin-flash ok">✅ {{ notify_test_ok }}</div>
+  {% elif notify_test_err %}
+  <div class="admin-flash error">❌ {{ notify_test_err }}</div>
+  {% endif %}
+
+  {% if notify_channels %}
+  <form action="/admin/notify/test" method="post" style="margin-bottom:14px;">
+    <button type="submit" class="admin-btn">🔔 ส่งข้อความทดสอบ</button>
+    <span class="rec-muted" style="font-size:0.8rem;margin-left:8px;">
+      ส่งไปทุกช่องทางที่เปิดไว้ เพื่อเช็คว่าตั้งค่าถูกหรือยัง
+    </span>
+  </form>
+  {% endif %}
+
+  {% if not notify_email_ready %}
+  <div class="admin-flash error" style="background:#fff8e1;color:#8a6d00;border-color:#ffe082;">
+    📧 อีเมลแจ้งเตือน: {{ notify_email_status }}<br>
+    <span style="font-size:0.85em;">
+      ใส่ App Password ของ Gmail ในช่อง <code>smtp.app_password</code>
+      ที่ไฟล์ <code>app/_data/secrets.json</code> แล้วรีสตาร์ทเซิร์ฟเวอร์
+      (สร้าง App Password ที่ myaccount.google.com/apppasswords — ต้องเปิด 2-Step Verification ก่อน)
+    </span>
+  </div>
+  {% endif %}
+
+  {% if not notify_sms_ready %}
+  <div class="admin-flash error" style="background:#fff8e1;color:#8a6d00;border-color:#ffe082;">
+    📱 SMS แจ้งเตือน: {{ notify_sms_status }}<br>
+    <span style="font-size:0.85em;">
+      ต้องสมัครบริการ SMS ที่มีค่าใช้จ่าย (ThaiBulkSMS หรือ Twilio) แล้วใส่ API key
+      ในส่วน <code>sms</code> ที่ไฟล์ <code>app/_data/secrets.json</code> แล้วรีสตาร์ทเซิร์ฟเวอร์
+    </span>
+  </div>
+  {% endif %}
+
+  {% include "partials/admin_nav.html" %}
+
+  <div class="admin-tabs">
+    <a href="/admin/orders?tab=orders" class="{% if tab=='orders' %}active{% endif %}">
+      🧾 คำสั่งซื้อ <span>{{ counts.orders }}</span>
+    </a>
+    <a href="/admin/orders?tab=payments" class="{% if tab=='payments' %}active{% endif %}">
+      💸 แจ้งชำระเงิน
+      <span {% if counts.pending %}class="badge-alert"{% endif %}>{{ counts.payments }}</span>
+    </a>
+    <a href="/admin/orders?tab=messages" class="{% if tab=='messages' %}active{% endif %}">
+      💬 ข้อความติดต่อ <span>{{ counts.messages }}</span>
+    </a>
+  </div>
+
+  {% if counts.pending %}
+  <div class="admin-flash ok" style="background:#fff8e1;color:#8a6d00;border-color:#ffe082;">
+    ⏳ มีสลิป {{ counts.pending }} ใบรอตรวจสอบ
+  </div>
+  {% endif %}
+
+  {# ── คำสั่งซื้อ ── #}
+  {% if tab == 'orders' %}
+    {% if orders %}
+    <div class="rec-list">
+      {% for o in orders %}
+      {% set st = order_statuses.get(o.status) or order_statuses['new'] %}
+      <div class="rec-card">
+        <div class="rec-top">
+          <span class="rec-no">{{ o.order_no }}</span>
+          <span class="rec-status {{ st.css }}">{{ st.label }}</span>
+          <span class="rec-date">{{ when(o.created_at) }}</span>
+          <span class="rec-total">฿{{ "{:,}".format(o.total) }}</span>
+        </div>
+        <div class="rec-body">
+          <div class="rec-col">
+            <div class="rec-label">ผู้รับ</div>
+            <div class="rec-strong">{{ o.customer.name }}</div>
+            <div class="rec-muted">📞 {{ o.customer.phone }}</div>
+            <div class="rec-muted rec-addr">📍 {{ o.customer.address }}</div>
+          </div>
+          <div class="rec-col">
+            <div class="rec-label">รายการ ({{ o["items"] | length }})</div>
+            {% for it in o["items"] %}
+            <div class="rec-item">
+              <span>{{ it.name }} · ไซซ์ {{ it.size }} × {{ it.qty }}</span>
+              <b>฿{{ "{:,}".format(it.subtotal) }}</b>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="rec-actions">
+          <form action="/admin/order/status" method="post" class="rec-form">
+            <input type="hidden" name="order_no" value="{{ o.order_no }}">
+            <select name="status">
+              {% for key, meta in order_statuses.items() %}
+              <option value="{{ key }}" {% if o.status == key %}selected{% endif %}>
+                {{ meta.label }}
+              </option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="admin-btn">เปลี่ยนสถานะ</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="rec-empty">ยังไม่มีคำสั่งซื้อเข้ามา</div>
+    {% endif %}
+  {% endif %}
+
+  {# ── แจ้งชำระเงิน ── #}
+  {% if tab == 'payments' %}
+    {% if payments %}
+    <div class="rec-list">
+      {% for p in payments %}
+      {% set pst = payment_statuses.get(p.status) or payment_statuses['pending'] %}
+      <div class="rec-card">
+        <div class="rec-top">
+          <span class="rec-no">{{ p.order_no or p.order_id or 'ไม่ระบุเลขที่' }}</span>
+          <span class="rec-status {{ pst.css }}">{{ pst.label }}</span>
+          <span class="rec-date">{{ when(p.created_at) }}</span>
+          <span class="rec-total">฿{{ p.amount or '—' }}</span>
+        </div>
+        <div class="rec-body">
+          <div class="rec-col">
+            <div class="rec-label">คำสั่งซื้อ</div>
+            {% if p.order_no %}
+            <div class="rec-strong">✅ ตรงกับ {{ p.order_no }}</div>
+            {% else %}
+            <div class="rec-warn">
+              ⚠️ ไม่พบคำสั่งซื้อ{% if p.order_id %} "{{ p.order_id }}"{% endif %} — ต้องจับคู่เอง
+            </div>
+            {% endif %}
+            <div class="rec-muted">ช่องทาง: {{ p.method }}</div>
+          </div>
+          <div class="rec-col">
+            <div class="rec-label">สลิป</div>
+            {% if p.slip %}
+            <a href="/admin/slip/{{ p.slip }}" target="_blank" class="rec-slip">📎 เปิดดูสลิป</a>
+            {% else %}
+            <div class="rec-muted">— ไม่ได้แนบสลิป —</div>
+            {% endif %}
+          </div>
+        </div>
+        {% if p.status == 'pending' %}
+        <div class="rec-actions">
+          <form action="/admin/payment/review" method="post" class="rec-form">
+            <input type="hidden" name="payment_id" value="{{ p.id }}">
+            <button type="submit" name="action" value="approve" class="admin-btn">
+              ✅ ยืนยันเงินเข้า
+            </button>
+            <button type="submit" name="action" value="reject" class="admin-btn ghost"
+                    onclick="return confirm('ปฏิเสธสลิปใบนี้?');">
+              ✖ ปฏิเสธ
+            </button>
+          </form>
+          {% if not p.order_no %}
+          <span class="rec-muted">ยืนยันได้ แต่จะไม่เปลี่ยนสถานะคำสั่งซื้อใด</span>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="rec-empty">ยังไม่มีการแจ้งชำระเงิน</div>
+    {% endif %}
+  {% endif %}
+
+  {# ── ข้อความติดต่อ ── #}
+  {% if tab == 'messages' %}
+    {% if messages %}
+    <div class="rec-list">
+      {% for m in messages %}
+      <div class="rec-card">
+        <div class="rec-top">
+          <span class="rec-no">{{ m.name }}</span>
+          <span class="rec-date">{{ when(m.created_at) }}</span>
+          <span class="rec-tag">{{ m.topic }}</span>
+        </div>
+        <div class="rec-body">
+          <div class="rec-col">
+            <div class="rec-label">ติดต่อกลับ</div>
+            <div class="rec-strong">{{ m.contact }}</div>
+          </div>
+          <div class="rec-col">
+            <div class="rec-label">ข้อความ</div>
+            <div class="rec-msg">{{ m.message }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="rec-empty">ยังไม่มีข้อความจากลูกค้า</div>
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}

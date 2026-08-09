@@ -2,62 +2,43 @@ from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from core import templates
-from data import PRODUCTS, cart, get_cart_count, get_cart_total
+from data import (
+    add_to_cart, get_cart_items, remove_cart_item, update_cart_item,
+)
 
 router = APIRouter(prefix="/cart")
 
 
 @router.get("/", response_class=HTMLResponse)
 async def view_cart(request: Request):
-    product_images = {p["id"]: p.get("image") for p in PRODUCTS}
+    items = get_cart_items(request)
     return templates.TemplateResponse(request, "cart.html", {
-        "cart": cart,
-        "cart_count": get_cart_count(),
-        "total": get_cart_total(),
-        "product_images": product_images,
+        "cart": items,
+        "cart_count": sum(i["qty"] for i in items),
+        "total": sum(i["subtotal"] for i in items),
+        "product_images": {i["product_id"]: i["image"] for i in items},
     })
 
 
 @router.post("/add")
-async def add_to_cart(
+async def add_item(
+    request: Request,
     product_id: int = Form(...),
     qty: int = Form(default=1),
     size: str = Form(default="M"),
 ):
-    product = next((p for p in PRODUCTS if p["id"] == product_id), None)
-    if not product:
-        raise HTTPException(status_code=404)
-    key = f"{product_id}_{size}"
-    existing = next((i for i in cart if i["key"] == key), None)
-    if existing:
-        existing["qty"] += qty
-    else:
-        cart.append({
-            "key": key,
-            "product_id": product_id,
-            "name": f"{product['brand']} {product['name']}",
-            "price": product["price"],
-            "size": size,
-            "qty": qty,
-            "c1": product["c1"],
-            "c2": product["c2"],
-            "type": product["type"],
-        })
+    if not add_to_cart(request, product_id, size, qty):
+        raise HTTPException(status_code=404, detail="ไม่พบสินค้า")
     return RedirectResponse(url="/cart/", status_code=303)
 
 
 @router.post("/update")
-async def update_cart(key: str = Form(...), qty: int = Form(...)):
-    if qty <= 0:
-        cart[:] = [i for i in cart if i["key"] != key]
-    else:
-        item = next((i for i in cart if i["key"] == key), None)
-        if item:
-            item["qty"] = qty
+async def update_cart(request: Request, key: str = Form(...), qty: int = Form(...)):
+    update_cart_item(request, key, qty)
     return RedirectResponse(url="/cart/", status_code=303)
 
 
 @router.post("/remove")
-async def remove_from_cart(key: str = Form(...)):
-    cart[:] = [i for i in cart if i["key"] != key]
+async def remove_from_cart(request: Request, key: str = Form(...)):
+    remove_cart_item(request, key)
     return RedirectResponse(url="/cart/", status_code=303)

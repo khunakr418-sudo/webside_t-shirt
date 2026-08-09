@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}เข้าสู่ระบบผู้ดูแล — Khunakorn Sport{% endblock %}
+
+{% block content %}
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-head">
+      <div class="login-icon">🔐</div>
+      <h1>เข้าสู่ระบบผู้ดูแล</h1>
+      <p>เฉพาะเจ้าหน้าที่ร้านเท่านั้น</p>
+    </div>
+
+    {% if locked %}
+    <div class="admin-flash error">
+      ⛔ ใส่รหัสผิดหลายครั้งเกินไป — ลองใหม่อีกครั้งใน {{ (locked // 60) + 1 }} นาที
+    </div>
+    {% elif error == 'bad' %}
+    <div class="admin-flash error">⚠️ ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+    {% elif error == 'locked' %}
+    <div class="admin-flash error">⛔ บัญชีถูกล็อกชั่วคราวจากการใส่รหัสผิดหลายครั้ง</div>
+    {% endif %}
+
+    <form action="/admin/login" method="post" class="login-form">
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="form-group">
+        <label>ชื่อผู้ใช้</label>
+        <input type="text" name="username" autocomplete="username"
+               required autofocus {% if locked %}disabled{% endif %}>
+      </div>
+      <div class="form-group">
+        <label>รหัสผ่าน</label>
+        <input type="password" name="password" autocomplete="current-password"
+               required {% if locked %}disabled{% endif %}>
+      </div>
+      <button type="submit" class="btn-submit" {% if locked %}disabled{% endif %}>
+        เข้าสู่ระบบ
+      </button>
+    </form>
+
+    <div class="login-foot">
+      ← <a href="/">กลับหน้าร้าน</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

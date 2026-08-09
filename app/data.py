@@ -2,6 +2,8 @@ import json
 from datetime import date, timedelta
 from pathlib import Path
 
+from fastapi import Request
+
 SIZES = ["S", "M", "L", "XL", "XXL"]
 
 BASE_DIR = Path(__file__).parent
@@ -139,15 +141,100 @@ def delivery_estimate(days: int = 2) -> str:
     return f"{d.day} {_TH_MONTHS[d.month - 1]} {d.year + 543}"
 
 
-cart: list[dict] = []
+# ── ตะกร้าสินค้า (แยกตามผู้ใช้ เก็บใน session cookie) ──────
+# เก็บเฉพาะ id/ไซซ์/จำนวน แล้วดึงชื่อ-ราคาจาก PRODUCTS ตอนแสดงผล
+# -> cookie เล็ก และราคาตรงกับที่แอดมินตั้งไว้ล่าสุดเสมอ
+_CART_KEY = "cart"
+MAX_QTY = 999
 
 
-def get_cart_count() -> int:
-    return sum(i["qty"] for i in cart)
+def _raw_cart(request: Request) -> list[dict]:
+    rows = request.session.get(_CART_KEY)
+    return rows if isinstance(rows, list) else []
 
 
-def get_cart_total() -> int:
-    return sum(i["price"] * i["qty"] for i in cart)
+def _save_cart(request: Request, rows: list[dict]) -> None:
+    if rows:
+        request.session[_CART_KEY] = rows
+    else:
+        request.session.pop(_CART_KEY, None)
+
+
+def _clean_qty(qty: int) -> int:
+    return max(1, min(MAX_QTY, qty))
+
+
+def get_cart_items(request: Request) -> list[dict]:
+    """รายการในตะกร้าพร้อมข้อมูลสินค้าเต็ม (ข้ามสินค้าที่ถูกลบไปแล้ว)"""
+    items = []
+    for row in _raw_cart(request):
+        product = next((p for p in PRODUCTS if p["id"] == row.get("pid")), None)
+        if not product:
+            continue
+        qty = _clean_qty(int(row.get("qty", 1)))
+        items.append({
+            "key": f"{product['id']}_{row.get('size', 'M')}",
+            "product_id": product["id"],
+            "name": f"{product['brand']} {product['name']}",
+            "price": product["price"],
+            "size": row.get("size", "M"),
+            "qty": qty,
+            "subtotal": product["price"] * qty,
+            "c1": product["c1"],
+            "c2": product["c2"],
+            "type": product["type"],
+            "image": product.get("image"),
+        })
+    return items
+
+
+def get_cart_count(request: Request) -> int:
+    return sum(i["qty"] for i in get_cart_items(request))
+
+
+def get_cart_total(request: Request) -> int:
+    return sum(i["subtotal"] for i in get_cart_items(request))
+
+
+def add_to_cart(request: Request, product_id: int, size: str, qty: int) -> bool:
+    """เพิ่มสินค้าลงตะกร้า คืน False ถ้าไม่พบสินค้า"""
+    if not any(p["id"] == product_id for p in PRODUCTS):
+        return False
+    if size not in SIZES:
+        size = "M"
+    qty = _clean_qty(qty)
+
+    rows = _raw_cart(request)
+    for row in rows:
+        if row.get("pid") == product_id and row.get("size") == size:
+            row["qty"] = _clean_qty(int(row.get("qty", 1)) + qty)
+            break
+    else:
+        rows.append({"pid": product_id, "size": size, "qty": qty})
+    _save_cart(request, rows)
+    return True
+
+
+def update_cart_item(request: Request, key: str, qty: int) -> None:
+    """แก้จำนวนสินค้าตาม key — จำนวน <= 0 คือลบออกจากตะกร้า"""
+    if qty <= 0:
+        remove_cart_item(request, key)
+        return
+    rows = _raw_cart(request)
+    for row in rows:
+        if f"{row.get('pid')}_{row.get('size')}" == key:
+            row["qty"] = _clean_qty(qty)
+    _save_cart(request, rows)
+
+
+def remove_cart_item(request: Request, key: str) -> None:
+    rows = [r for r in _raw_cart(request)
+            if f"{r.get('pid')}_{r.get('size')}" != key]
+    _save_cart(request, rows)
+
+
+def clear_cart(request: Request) -> None:
+    request.session.pop(_CART_KEY, None)
 
 
 def _sync_main(p: dict) -> None:

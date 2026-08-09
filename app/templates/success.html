@@ -14,11 +14,25 @@
       </svg>
     </div>
     <h1>สั่งซื้อสำเร็จแล้ว!</h1>
+
+    {% if order %}
+    <div class="success-order">
+      <div class="so-label">เลขที่คำสั่งซื้อของคุณ</div>
+      <div class="so-no">{{ order.order_no }}</div>
+      <div class="so-total">ยอดรวม ฿{{ "{:,}".format(order.total) }}</div>
+      <div class="so-hint">กรุณาเก็บเลขที่นี้ไว้อ้างอิงตอนแจ้งชำระเงิน</div>
+    </div>
+    {% endif %}
+
     <p>
       ขอบคุณที่ไว้วางใจ Khunakorn Sport<br>
       เราจะดำเนินการจัดส่งภายใน 1–3 วันทำการ<br>
       และแจ้งเลขพัสดุให้ทาง SMS หรืออีเมล
     </p>
+
+    {% if order %}
+    <a href="/payment/" class="btn-home" style="margin-bottom:10px;">💸 แจ้งชำระเงิน</a>
+    {% endif %}
     <a href="/" class="btn-home">กลับหน้าแรก</a>
     <div style="margin-top:16px;">
       <a href="/shop/" style="color:var(--green);font-size:0.85rem;text-decoration:none;">← ช้อปต่อ</a>

@@ -10,12 +10,18 @@
     <p>อัปโหลดได้สินค้าละ 4 รูป · <b>รูปหลัก</b> (ช่องแรก) แสดงทุกหน้า · รูปที่ 2–4 แสดงเป็นแกลเลอรีในหน้าสินค้า · ช่องที่ว่างจะใช้ภาพ SVG แทน</p>
   </div>
 
+  {% include "partials/admin_nav.html" %}
+
   {% if ok %}
   <div class="admin-flash ok">✅ บันทึกรูปของสินค้า #{{ ok }} เรียบร้อยแล้ว</div>
   {% elif error == 'type' %}
   <div class="admin-flash error">⚠️ ไฟล์ไม่ถูกต้อง — รองรับเฉพาะ .jpg .jpeg .png .webp .gif</div>
   {% elif error == 'slot' %}
   <div class="admin-flash error">⚠️ ช่องรูปไม่ถูกต้อง</div>
+  {% elif error == 'size' %}
+  <div class="admin-flash error">⚠️ ไฟล์ใหญ่เกินไป — รับไม่เกิน 5MB ต่อรูป</div>
+  {% elif error == 'write' %}
+  <div class="admin-flash error">⚠️ บันทึกไฟล์ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>
   {% endif %}
 
   <div class="admin-grid">

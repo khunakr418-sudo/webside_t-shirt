@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ข้อมูลรันไทม์ของร้าน (คำสั่งซื้อ/สลิป/ข้อความ/secret key) — ห้าม commit
+app/_data/

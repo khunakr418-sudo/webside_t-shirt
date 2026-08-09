@@ -15,7 +15,7 @@ async def shop(request: Request, filter_type: Optional[str] = None):
     return templates.TemplateResponse(request, "shop.html", {
         "products": products,
         "filter_type": filter_type,
-        "cart_count": get_cart_count(),
+        "cart_count": get_cart_count(request),
     })
 
 
@@ -29,5 +29,5 @@ async def product_detail(request: Request, product_id: int):
         "sizes": SIZES,
         "reviews": REVIEWS.get(product_id, []),
         "delivery": delivery_estimate(),
-        "cart_count": get_cart_count(),
+        "cart_count": get_cart_count(request),
     })

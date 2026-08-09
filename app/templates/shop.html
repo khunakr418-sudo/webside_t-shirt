@@ -60,7 +60,9 @@
     <div class="widget">
       <div class="widget-title">📞 ติดต่อสั่งซื้อ</div>
       <div class="widget-body" style="font-size:0.85rem;color:var(--muted);line-height:2;">
-        📱 02-XXX-XXXX<br>📧 support@khunakorn.th<br>🕐 จ–ศ 09:00–18:00 น.
+        📱 <a href="tel:{{ shop.phone_link }}">{{ shop.phone }}</a><br>
+        📧 <a href="mailto:{{ shop.email }}">{{ shop.email }}</a><br>
+        🕐 {{ shop.hours }}
       </div>
     </div>
   </aside>

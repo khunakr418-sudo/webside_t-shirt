@@ -11,5 +11,5 @@ router = APIRouter()
 async def landing(request: Request):
     return templates.TemplateResponse(request, "landing.html", {
         "products": PRODUCTS,
-        "cart_count": get_cart_count(),
+        "cart_count": get_cart_count(request),
     })

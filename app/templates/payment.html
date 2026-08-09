@@ -112,24 +112,54 @@
           <p>โอนแล้วแจ้งที่นี่ เพื่อยืนยันและจัดส่งเร็วขึ้น</p>
         </div>
 
-        {% if done %}
+        {% if done and unmatched %}
+        <div class="admin-flash error">
+          ⚠️ รับแจ้งชำระเงินแล้ว แต่ไม่พบคำสั่งซื้อเลขที่ <b>{{ unmatched }}</b><br>
+          ทีมงานจะตรวจสอบให้เอง หรือทักแชทแจ้งเลขที่ถูกต้องได้เลยครับ
+        </div>
+        {% elif done %}
         <div class="contact-alert">
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
           <span>รับแจ้งชำระเงินแล้ว! ทีมงานกำลังตรวจสอบสลิป และจะจัดส่งให้เร็วที่สุด 🙏</span>
         </div>
+        {% elif error == 'type' %}
+        <div class="admin-flash error">⚠️ ไฟล์สลิปไม่ถูกต้อง — รองรับ .jpg .jpeg .png .webp .pdf</div>
+        {% elif error == 'size' %}
+        <div class="admin-flash error">⚠️ ไฟล์สลิปใหญ่เกินไป — รับไม่เกิน 5MB</div>
+        {% elif error == 'write' %}
+        <div class="admin-flash error">⚠️ บันทึกสลิปไม่สำเร็จ กรุณาลองใหม่อีกครั้ง</div>
         {% endif %}
 
         <form action="/payment/notify" method="post" enctype="multipart/form-data" class="notify-form">
           <div class="cf-row">
             <div class="form-group">
               <label>เลขคำสั่งซื้อ</label>
-              <input type="text" name="order_id" placeholder="เช่น #KS-1024">
+              {% if my_orders %}
+              <select name="order_id" id="orderPick">
+                {% for o in my_orders %}
+                <option value="{{ o.order_no }}" data-total="{{ o.total }}">
+                  {{ o.order_no }} — ฿{{ "{:,}".format(o.total) }}
+                </option>
+                {% endfor %}
+                <option value="">อื่นๆ — พิมพ์เลขเอง</option>
+              </select>
+              {% else %}
+              <input type="text" name="order_id" placeholder="เช่น KS-260809-9F29">
+              {% endif %}
             </div>
             <div class="form-group">
               <label>ยอดที่โอน (บาท) <span>*</span></label>
-              <input type="number" name="amount" min="1" step="1" placeholder="เช่น 598" required>
+              <input type="number" name="amount" id="payAmount" min="1" step="1"
+                     placeholder="เช่น 598" required>
             </div>
           </div>
+
+          {% if my_orders %}
+          <div class="form-group" id="manualWrap">
+            <label>ไม่พบเลขที่ต้องการ? พิมพ์เอง</label>
+            <input type="text" name="order_id_manual" placeholder="เช่น KS-260809-9F29">
+          </div>
+          {% endif %}
           <div class="form-group">
             <label>ช่องทางที่ชำระ</label>
             <select name="method">
@@ -210,6 +240,24 @@
       var svg = box.querySelector('svg');
       if (svg) { svg.style.width = '100%'; svg.style.height = '100%'; }
     } catch (e) { box.style.display = 'none'; }
+  })();
+
+  // ── เลือกคำสั่งซื้อแล้วเติมยอดเงินให้อัตโนมัติ ──
+  (function () {
+    var pick = document.getElementById('orderPick');
+    var manual = document.getElementById('manualWrap');
+    if (!pick) return;
+
+    function sync() {
+      var opt = pick.options[pick.selectedIndex];
+      var total = opt && opt.getAttribute('data-total');
+      var amount = document.getElementById('payAmount');
+      // ช่องพิมพ์เองจะโผล่เฉพาะตอนเลือก "อื่นๆ"
+      if (manual) manual.style.display = pick.value ? 'none' : '';
+      if (total && amount) amount.value = total;
+    }
+    pick.addEventListener('change', sync);
+    sync();
   })();
 
   // ── copy to clipboard ──

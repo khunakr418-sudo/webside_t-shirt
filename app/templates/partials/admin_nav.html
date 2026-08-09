@@ -1,0 +1,7 @@
+<div class="admin-nav">
+  <div class="admin-nav-links">
+    <a href="/admin/" class="{% if request.url.path == '/admin/' %}active{% endif %}">🖼️ จัดการสินค้า</a>
+    <a href="/admin/orders" class="{% if '/admin/orders' in request.url.path %}active{% endif %}">📋 คำสั่งซื้อ &amp; ข้อความ</a>
+  </div>
+  <a href="/admin/logout" class="admin-logout">ออกจากระบบ →</a>
+</div>
