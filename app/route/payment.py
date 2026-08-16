@@ -11,9 +11,14 @@ from .order import my_order_numbers
 router = APIRouter(prefix="/payment")
 
 
+# ── พร้อมเพย์ (ของจริง) ───────────────────────────────────
+# ใช้รูป QR จริงที่บันทึกไว้ที่ static/images/ แทนการสร้าง QR เอง
+# เพราะเป็น QR ผูกบัญชีธนาคาร ไม่ใช่ QR แบบผูกเบอร์
+PROMPTPAY_NAME = "ด.ช. คุณากร ผาสุข"
+PROMPTPAY_ACCOUNT = "xxx-x-x4937-x"          # เลขบัญชีที่ธนาคารปิดบางส่วนไว้
+PROMPTPAY_QR_IMAGE = "promptpay.jpg"
+
 # ── ข้อมูลบัญชีจำลอง (เดโม) ─────────────────────────────
-PROMPTPAY_ID = "0812345678"          # เบอร์พร้อมเพย์ (จำลอง)
-PROMPTPAY_NAME = "บจก. คุณากร สปอร์ต"
 
 BANK_ACCOUNTS = [
     {
@@ -87,9 +92,9 @@ async def payment(request: Request, done: int = 0, error: str = None,
     return templates.TemplateResponse(request, "payment.html", {
         "cart_count": get_cart_count(request),
         "accounts": BANK_ACCOUNTS,
-        "promptpay_id": PROMPTPAY_ID,
         "promptpay_name": PROMPTPAY_NAME,
-        "promptpay_payload": build_promptpay_payload(PROMPTPAY_ID),
+        "promptpay_account": PROMPTPAY_ACCOUNT,
+        "promptpay_qr_image": PROMPTPAY_QR_IMAGE,
         "done": bool(done),
         "error": error,
         "unmatched": unmatched,

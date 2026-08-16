@@ -209,6 +209,8 @@ async def admin_orders(request: Request, tab: str = "orders",
         "notify_email_status": notify.email_status(),
         "notify_sms_ready": notify.SMS_READY,
         "notify_sms_status": notify.sms_status(),
+        "notify_telegram_ready": notify.TELEGRAM_READY,
+        "notify_telegram_status": notify.telegram_status(),
         "notify_test_ok": ntok,
         "notify_test_err": nterr,
         "counts": {
@@ -232,21 +234,55 @@ async def notify_test():
 
 
 @protected.post("/payment/review")
-async def review_payment(payment_id: str = Form(...), action: str = Form(...)):
+async def review_payment(
+    payment_id: str = Form(...),
+    action: str = Form(...),
+    next: str = Form(None),
+):
     """ยืนยันหรือปฏิเสธสลิป — คำสั่งซื้อที่ผูกไว้จะเปลี่ยนสถานะตามอัตโนมัติ"""
     if action not in ("approve", "reject"):
         raise HTTPException(status_code=400, detail="คำสั่งไม่ถูกต้อง")
-    if not storage.review_payment(payment_id, approve=action == "approve"):
+    payment = storage.review_payment(payment_id, approve=action == "approve")
+    if not payment:
         raise HTTPException(status_code=404, detail="ไม่พบรายการแจ้งชำระเงิน")
-    return RedirectResponse(url="/admin/orders?tab=payments", status_code=303)
+    order_no = payment.get("order_no")
+    if order_no:
+        order = storage.get_order(order_no)
+        if order:
+            notify.order_status_changed(order, storage.ORDER_STATUSES[order["status"]]["label"])
+    target = safe_next(next) if next else "/admin/orders?tab=payments"
+    return RedirectResponse(url=target, status_code=303)
+
+
+@protected.get("/orders/{order_no}", response_class=HTMLResponse)
+async def admin_order_detail(request: Request, order_no: str):
+    """หน้ายืนยัน/รายละเอียดคำสั่งซื้อเดียว — ดูครบทุกอย่างและเปลี่ยนสถานะได้ในหน้าเดียว"""
+    order = storage.get_order(order_no)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบคำสั่งซื้อ")
+    payments = [p for p in storage.list_payments() if p.get("order_no") == order["order_no"]]
+    return templates.TemplateResponse(request, "admin_order_detail.html", {
+        "cart_count": get_cart_count(request),
+        "order": order,
+        "payments": payments,
+        "order_statuses": storage.ORDER_STATUSES,
+        "payment_statuses": storage.PAYMENT_STATUSES,
+    })
 
 
 @protected.post("/order/status")
-async def set_order_status(order_no: str = Form(...), status: str = Form(...)):
+async def set_order_status(
+    order_no: str = Form(...),
+    status: str = Form(...),
+    next: str = Form(None),
+):
     """เปลี่ยนสถานะคำสั่งซื้อด้วยตนเอง (เช่น รับเงินสด/COD โดยไม่มีสลิป)"""
-    if not storage.set_order_status(order_no, status):
+    order = storage.set_order_status(order_no, status)
+    if not order:
         raise HTTPException(status_code=404, detail="ไม่พบคำสั่งซื้อหรือสถานะไม่ถูกต้อง")
-    return RedirectResponse(url="/admin/orders?tab=orders", status_code=303)
+    notify.order_status_changed(order, storage.ORDER_STATUSES[status]["label"])
+    target = safe_next(next) if next else "/admin/orders?tab=orders"
+    return RedirectResponse(url=target, status_code=303)
 
 
 @protected.get("/slip/{filename}")

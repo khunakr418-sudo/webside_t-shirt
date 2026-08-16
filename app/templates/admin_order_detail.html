@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}คำสั่งซื้อ {{ order.order_no }} — Admin{% endblock %}
+
+{% macro when(ts) -%}
+{{ ts[:16].replace('T', ' ') if ts else '—' }}
+{%- endmacro %}
+
+{% block content %}
+<div class="admin-wrap">
+
+  <a href="/admin/orders" class="back-link" style="margin-bottom:14px;display:inline-flex;">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    กลับรายการคำสั่งซื้อ
+  </a>
+
+  {% set st = order_statuses.get(order.status) or order_statuses['new'] %}
+  <div class="admin-head od-head">
+    <h1>🧾 คำสั่งซื้อ {{ order.order_no }}</h1>
+    <p>
+      สั่งเมื่อ {{ when(order.created_at) }}
+      {%- if order.get('status_at') %} · อัปเดตสถานะล่าสุด {{ when(order.status_at) }}{% endif %}
+    </p>
+    <span class="rec-status od-status {{ st.css }}">{{ st.label }}</span>
+  </div>
+
+  {% if order.status != 'paid' %}
+  <form action="/admin/order/status" method="post" class="od-confirm-form">
+    <input type="hidden" name="order_no" value="{{ order.order_no }}">
+    <input type="hidden" name="status" value="paid">
+    <input type="hidden" name="next" value="/admin/orders/{{ order.order_no }}">
+    <button type="submit" class="admin-btn od-confirm-btn">
+      ✅ ยืนยันคำสั่งซื้อ (ได้รับเงินแล้ว)
+    </button>
+  </form>
+  {% else %}
+  <div class="admin-flash ok">✅ คำสั่งซื้อนี้ยืนยันแล้วว่าชำระเงินเรียบร้อย</div>
+  {% endif %}
+
+  <div class="od-grid">
+    <div class="rec-card od-card">
+      <div class="rec-label">ผู้รับสินค้า</div>
+      <div class="rec-strong" style="font-size:1.05rem;">{{ order.customer.name }}</div>
+      <div class="rec-muted">📞 <a href="tel:{{ order.customer.phone }}">{{ order.customer.phone }}</a></div>
+      <div class="rec-muted rec-addr">📍 {{ order.customer.address }}</div>
+    </div>
+
+    <div class="rec-card od-card">
+      <div class="rec-label">รายการสินค้า ({{ order["items"] | length }})</div>
+      {% for it in order["items"] %}
+      <div class="rec-item">
+        <span>{{ it.name }} · ไซซ์ {{ it.size }} × {{ it.qty }}</span>
+        <b>฿{{ "{:,}".format(it.subtotal) }}</b>
+      </div>
+      {% endfor %}
+      <div class="order-total" style="margin-top:10px;">
+        <span>ยอดรวมทั้งหมด</span>
+        <span>฿{{ "{:,}".format(order.total) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rec-card od-card" style="margin-top:1.25rem;">
+    <div class="rec-label">เปลี่ยนสถานะคำสั่งซื้อ</div>
+    <form action="/admin/order/status" method="post" class="rec-form">
+      <input type="hidden" name="order_no" value="{{ order.order_no }}">
+      <input type="hidden" name="next" value="/admin/orders/{{ order.order_no }}">
+      <select name="status">
+        {% for key, meta in order_statuses.items() %}
+        <option value="{{ key }}" {% if order.status == key %}selected{% endif %}>{{ meta.label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="admin-btn">บันทึกสถานะ</button>
+    </form>
+  </div>
+
+  <div class="admin-head" style="margin-top:1.25rem;">
+    <h1 style="font-size:1.15rem;">💸 การแจ้งชำระเงินที่ผูกกับคำสั่งซื้อนี้</h1>
+  </div>
+
+  {% if payments %}
+  <div class="rec-list">
+    {% for p in payments %}
+    {% set pst = payment_statuses.get(p.status) or payment_statuses['pending'] %}
+    <div class="rec-card">
+      <div class="rec-top">
+        <span class="rec-no">฿{{ p.amount or '—' }} · {{ p.method }}</span>
+        <span class="rec-status {{ pst.css }}">{{ pst.label }}</span>
+        <span class="rec-date">{{ when(p.created_at) }}</span>
+      </div>
+      <div class="rec-body">
+        <div class="rec-col">
+          <div class="rec-label">สลิป</div>
+          {% if p.slip %}
+          <a href="/admin/slip/{{ p.slip }}" target="_blank" class="rec-slip">📎 เปิดดูสลิป</a>
+          {% else %}
+          <div class="rec-muted">— ไม่ได้แนบสลิป —</div>
+          {% endif %}
+        </div>
+      </div>
+      {% if p.status == 'pending' %}
+      <div class="rec-actions">
+        <form action="/admin/payment/review" method="post" class="rec-form">
+          <input type="hidden" name="payment_id" value="{{ p.id }}">
+          <input type="hidden" name="next" value="/admin/orders/{{ order.order_no }}">
+          <button type="submit" name="action" value="approve" class="admin-btn">✅ ยืนยันเงินเข้า</button>
+          <button type="submit" name="action" value="reject" class="admin-btn ghost"
+                  onclick="return confirm('ปฏิเสธสลิปใบนี้?');">✖ ปฏิเสธ</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="rec-empty">ยังไม่มีการแจ้งชำระเงินสำหรับคำสั่งซื้อนี้</div>
+  {% endif %}
+
+</div>
+{% endblock %}

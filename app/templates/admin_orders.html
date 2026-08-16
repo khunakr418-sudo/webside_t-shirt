@@ -54,6 +54,16 @@
   </div>
   {% endif %}
 
+  {% if not notify_telegram_ready %}
+  <div class="admin-flash error" style="background:#fff8e1;color:#8a6d00;border-color:#ffe082;">
+    📨 Telegram แจ้งเตือน: {{ notify_telegram_status }}<br>
+    <span style="font-size:0.85em;">
+      ใส่ bot_token และ chat_id ในส่วน <code>telegram</code> ที่ไฟล์ <code>app/_data/secrets.json</code>
+      แล้วรีสตาร์ทเซิร์ฟเวอร์ (สร้างบอทที่ @BotFather แล้วทักบอทก่อน 1 ครั้งเพื่อได้ chat_id)
+    </span>
+  </div>
+  {% endif %}
+
   {% include "partials/admin_nav.html" %}
 
   <div class="admin-tabs">
@@ -83,7 +93,7 @@
       {% set st = order_statuses.get(o.status) or order_statuses['new'] %}
       <div class="rec-card">
         <div class="rec-top">
-          <span class="rec-no">{{ o.order_no }}</span>
+          <a href="/admin/orders/{{ o.order_no }}" class="rec-no rec-no-link">{{ o.order_no }} →</a>
           <span class="rec-status {{ st.css }}">{{ st.label }}</span>
           <span class="rec-date">{{ when(o.created_at) }}</span>
           <span class="rec-total">฿{{ "{:,}".format(o.total) }}</span>

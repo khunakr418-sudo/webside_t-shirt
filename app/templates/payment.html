@@ -61,19 +61,14 @@
         </div>
 
         <div class="promptpay-card">
-          <div class="pp-brand">
-            <span class="pp-logo">พร้อมเพย์ <b>PromptPay</b></span>
-          </div>
-          <div class="pp-qr">
-            <div id="ppqr" data-payload="{{ promptpay_payload }}"></div>
-            <div class="pp-qr-fallback">QR สแกนไม่ขึ้น? โอนที่เบอร์<br><b>{{ promptpay_id }}</b></div>
+          <div class="pp-qr pp-qr-img">
+            <img src="/static/images/{{ promptpay_qr_image }}"
+                 alt="QR พร้อมเพย์ {{ promptpay_name }}">
           </div>
           <div class="pp-info">
             <div class="pp-name">{{ promptpay_name }}</div>
-            <div class="pp-id">
-              <span data-acc="{{ promptpay_id }}">{{ promptpay_id }}</span>
-              <button type="button" class="copy-btn" data-copy="{{ promptpay_id }}">คัดลอกเบอร์</button>
-            </div>
+            <div class="pp-id"><span>บัญชี {{ promptpay_account }}</span></div>
+            <div class="pp-hint">บันทึกรูป QR ไว้สแกนในแอปธนาคารได้เลย · รับเงินได้จากทุกธนาคาร</div>
           </div>
         </div>
       </div>
@@ -199,11 +194,11 @@
       </details>
       <details class="lp-faq-item">
         <summary><span>สแกน PromptPay แล้วยอดไม่ขึ้น ทำอย่างไร?</span><span class="lp-faq-icon">+</span></summary>
-        <p class="lp-faq-answer">QR นี้เป็นแบบระบุปลายทาง คุณกรอกยอดเองในแอปธนาคารได้ตามยอดคำสั่งซื้อ หรือโอนไปที่เบอร์พร้อมเพย์ {{ promptpay_id }} โดยตรง</p>
+        <p class="lp-faq-answer">QR นี้เป็นแบบระบุปลายทาง ไม่ได้ระบุยอดมาให้ คุณกรอกยอดเองในแอปธนาคารตามยอดคำสั่งซื้อได้เลย · ถ้าสแกนจากหน้าจอไม่ติด ให้บันทึกรูป QR ลงเครื่องแล้วเลือก "สแกนจากรูปภาพ" ในแอปธนาคาร</p>
       </details>
       <details class="lp-faq-item">
         <summary><span>ชำระเงินปลอดภัยไหม?</span><span class="lp-faq-icon">+</span></summary>
-        <p class="lp-faq-answer">บัญชีรับเงินเป็นชื่อนิติบุคคล "{{ promptpay_name }}" ตรวจสอบได้ และรองรับเก็บเงินปลายทาง (COD) หากไม่สะดวกโอนก่อน</p>
+        <p class="lp-faq-answer">ชื่อบัญชีปลายทางจะขึ้นว่า "{{ promptpay_name }}" ให้ตรวจสอบชื่อนี้ก่อนกดโอนทุกครั้ง และรองรับเก็บเงินปลายทาง (COD) หากไม่สะดวกโอนก่อน</p>
       </details>
       <details class="lp-faq-item">
         <summary><span>ออกใบกำกับภาษีได้ไหม?</span><span class="lp-faq-icon">+</span></summary>
@@ -226,22 +221,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
-  // ── render PromptPay QR ──
-  (function () {
-    var box = document.getElementById('ppqr');
-    if (!box || typeof qrcode === 'undefined') return;
-    try {
-      var qr = qrcode(0, 'M');
-      qr.addData(box.getAttribute('data-payload'));
-      qr.make();
-      box.innerHTML = qr.createSvgTag({ cellSize: 5, margin: 0, scalable: true });
-      var svg = box.querySelector('svg');
-      if (svg) { svg.style.width = '100%'; svg.style.height = '100%'; }
-    } catch (e) { box.style.display = 'none'; }
-  })();
-
   // ── เลือกคำสั่งซื้อแล้วเติมยอดเงินให้อัตโนมัติ ──
   (function () {
     var pick = document.getElementById('orderPick');

@@ -120,6 +120,19 @@ def _sms_from_local(local: dict) -> dict:
     }
 
 
+def _telegram_from_local(local: dict) -> dict:
+    """ตั้งค่า Telegram แจ้งเตือน — env มาก่อน แล้วค่อยอ่านจาก secrets.json
+
+    ต้องสร้างบอทผ่าน @BotFather เพื่อได้ bot_token แล้วให้ผู้รับ (ร้าน) ทัก
+    บอทก่อนอย่างน้อย 1 ครั้ง เพื่อให้ระบบดึง chat_id มาใช้ส่งข้อความหาได้
+    """
+    block = local.get("telegram") if isinstance(local.get("telegram"), dict) else {}
+    return {
+        "token": os.getenv("TELEGRAM_BOT_TOKEN") or block.get("bot_token") or "",
+        "chat_id": os.getenv("TELEGRAM_CHAT_ID") or block.get("chat_id") or "",
+    }
+
+
 def _load() -> tuple[str, str, str, str | None]:
     """คืน (secret_key, admin_user, admin_password_hash, รหัสผ่านที่เก็บในไฟล์)
 
@@ -198,6 +211,20 @@ def _load() -> tuple[str, str, str, str | None]:
         }
         dirty = True
 
+    # โครงตั้งค่า Telegram — สร้างบอทผ่าน @BotFather เอา token มาใส่ แล้วให้ผู้รับทักบอทก่อน 1 ครั้ง
+    if not isinstance(local.get("telegram"), dict):
+        local["telegram"] = {
+            "_howto": (
+                "แจ้งเตือนผ่าน Telegram: สร้างบอทที่ @BotFather เพื่อได้ bot_token "
+                "ใส่ในช่อง bot_token แล้วให้ผู้รับ (ร้าน) เปิดแชทกับบอทแล้วส่งข้อความอะไรก็ได้ 1 ครั้ง "
+                "จากนั้นใส่ chat_id ที่ได้ (ดูได้จาก https://api.telegram.org/bot<TOKEN>/getUpdates) "
+                "แล้วรีสตาร์ทเซิร์ฟเวอร์"
+            ),
+            "bot_token": "",
+            "chat_id": "",
+        }
+        dirty = True
+
     if dirty:
         _write_local_secrets(local)
 
@@ -208,6 +235,7 @@ SECRET_KEY, ADMIN_USER, ADMIN_PASSWORD_HASH, LOCAL_PASSWORD = _load()
 _local = _read_local_secrets()
 SMTP = _smtp_from_local(_local)
 SMS = _sms_from_local(_local)
+TELEGRAM = _telegram_from_local(_local)
 
 
 def _console_supports_thai() -> bool:

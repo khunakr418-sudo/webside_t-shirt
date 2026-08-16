@@ -1096,14 +1096,16 @@ img, svg, iframe { max-width:100%; }
 .pp-logo { color: #fff; font-size: .82rem; font-weight: 700; letter-spacing: .5px; }
 .pp-logo b { color: #ffd400; }
 .pp-qr { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-#ppqr { width: 190px; height: 190px; display: grid; place-items: center; }
-#ppqr svg { width: 100%; height: 100%; shape-rendering: crispEdges; }
+/* รูป QR จริงจากธนาคาร — มีหัว/ท้ายมาในรูปแล้ว จึงไม่ต้องเว้นขอบเพิ่ม */
+.pp-qr-img { padding: 0; }
+.pp-qr-img img { width: 100%; height: auto; display: block; }
 .pp-qr-fallback { font-size: .74rem; color: var(--muted); text-align: center; line-height: 1.5; }
 .pp-qr-fallback b { color: var(--green4); font-size: .9rem; }
 .pp-info { border-top: 1px dashed var(--border); padding: 14px 16px; text-align: center; }
 .pp-name { font-weight: 800; color: var(--green4); font-size: .92rem; margin-bottom: 8px; }
 .pp-id { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .pp-id span { font-size: 1.02rem; font-weight: 900; color: var(--text); letter-spacing: .5px; }
+.pp-hint { font-size: .72rem; color: var(--muted); line-height: 1.6; margin-top: 8px; }
 
 /* cod */
 .cod-note {
@@ -1698,6 +1700,20 @@ img, svg, iframe { max-width:100%; }
 /* ตัวเลขเตือนบนแท็บเมื่อมีสลิปค้างรอตรวจ */
 .admin-tabs a span.badge-alert { background:var(--accent); color:#fff; }
 .admin-tabs a.active span.badge-alert { background:var(--accent); color:#fff; }
+
+/* ── หน้ายืนยัน/รายละเอียดคำสั่งซื้อเดียว ── */
+.rec-no-link { text-decoration:none; }
+.rec-no-link:hover { text-decoration:underline; }
+.od-head { position:relative; }
+.od-status { position:absolute; top:1.25rem; right:1.25rem; }
+.od-confirm-form { margin-bottom:1.25rem; }
+.od-confirm-btn { width:100%; padding:14px; font-size:1rem; font-weight:800; }
+.od-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+.od-card { padding:16px; }
+@media (max-width:700px) {
+  .od-grid { grid-template-columns:1fr; }
+  .od-status { position:static; display:inline-block; margin-top:8px; }
+}
 
 /* ── ลิงก์ติดต่อร้าน (เบอร์โทร / อีเมล) ── */
 .topbar-tel { color:#fff; font-weight:700; text-decoration:none; }

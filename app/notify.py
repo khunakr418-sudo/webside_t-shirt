@@ -25,11 +25,20 @@ import threading
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 
 import config
 
 TIMEOUT = 8  # วินาที
+
+# ประเทศไทยใช้ UTC+7 ตลอดปีไม่มี DST จึงใช้ offset คงที่ได้เลย ไม่ต้องพึ่ง tzdata
+TH_TZ = timezone(timedelta(hours=7))
+
+
+def _now_th() -> str:
+    """เวลาปัจจุบันตามเขตเวลาไทย สำหรับแปะท้ายข้อความแจ้งเตือนทุกช่องทาง"""
+    return datetime.now(TH_TZ).strftime("%d/%m/%Y %H:%M:%S น.")
 
 WEBHOOK_URL = os.getenv("NOTIFY_WEBHOOK_URL", "").strip()
 LINE_TOKEN = os.getenv("LINE_CHANNEL_TOKEN", "").strip()
@@ -52,6 +61,12 @@ EMAIL_READY = bool(SMTP_HOST and SMTP_TO and SMTP_PASS)
 SMS = config.SMS
 SMS_READY = bool(SMS["key"] and SMS["to"])
 
+# ตั้งค่า Telegram อ่านจาก config (env -> _data/secrets.json)
+TELEGRAM = config.TELEGRAM
+TELEGRAM_TOKEN = TELEGRAM["token"]
+TELEGRAM_CHAT_ID = TELEGRAM["chat_id"]
+TELEGRAM_READY = bool(TELEGRAM_TOKEN and TELEGRAM_CHAT_ID)
+
 
 def enabled_channels() -> list[str]:
     """ช่องทางที่ตั้งค่าไว้แล้ว — ใช้แสดงสถานะในหน้าแอดมิน"""
@@ -64,7 +79,18 @@ def enabled_channels() -> list[str]:
         channels.append(f"อีเมล → {SMTP_TO}")
     if SMS_READY:
         channels.append(f"SMS → {SMS['to']}")
+    if TELEGRAM_READY:
+        channels.append("Telegram")
     return channels
+
+
+def telegram_status() -> str:
+    """ข้อความอธิบายสถานะ Telegram สำหรับหน้าแอดมิน"""
+    if TELEGRAM_READY:
+        return "พร้อมส่งข้อความแจ้งเตือนแล้ว"
+    if TELEGRAM_TOKEN and not TELEGRAM_CHAT_ID:
+        return "ใส่ bot_token แล้ว — รอทักบอทแล้วใส่ chat_id"
+    return "ยังไม่ได้ตั้งค่า"
 
 
 def email_status() -> str:
@@ -106,6 +132,13 @@ def _send_line(text: str) -> None:
         "https://api.line.me/v2/bot/message/broadcast",
         {"messages": [{"type": "text", "text": text[:4900]}]},
         {"Authorization": f"Bearer {LINE_TOKEN}"},
+    )
+
+
+def _send_telegram(text: str) -> None:
+    _post_json(
+        f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage",
+        {"chat_id": TELEGRAM_CHAT_ID, "text": text[:4096]},
     )
 
 
@@ -187,6 +220,8 @@ def _deliver(subject: str, text: str, sms_text: str) -> None:
         jobs.append(("email", lambda: _send_email(subject, text)))
     if SMS_READY:
         jobs.append(("sms", lambda: _send_sms(sms_text)))
+    if TELEGRAM_READY:
+        jobs.append(("telegram", lambda: _send_telegram(text)))
 
     for name, fn in jobs:
         try:
@@ -210,6 +245,7 @@ def send_test() -> tuple[bool, str]:
         "ถ้าคุณได้รับข้อความนี้ แปลว่าตั้งค่าถูกต้องแล้ว",
         f"ระบบจะแจ้งเตือนเมื่อมีคำสั่งซื้อใหม่และมีการแจ้งชำระเงิน",
         f"ดูในระบบ: {SITE_URL}/admin/orders",
+        f"🕒 เวลา: {_now_th()}",
     ])
     sms_text = "ทดสอบแจ้งเตือน Khunakorn Sport ตั้งค่าถูกต้องแล้ว"
 
@@ -222,6 +258,8 @@ def send_test() -> tuple[bool, str]:
         jobs.append(("อีเมล", lambda: _send_email(subject, text)))
     if SMS_READY:
         jobs.append(("SMS", lambda: _send_sms(sms_text)))
+    if TELEGRAM_READY:
+        jobs.append(("Telegram", lambda: _send_telegram(text)))
 
     ok, failed = [], []
     for name, fn in jobs:
@@ -246,7 +284,7 @@ def send(subject: str, lines: list[str], sms: str | None = None) -> None:
     """
     if not enabled_channels():
         return
-    text = subject + "\n" + "\n".join(lines)
+    text = subject + "\n" + "\n".join([*lines, f"🕒 เวลา: {_now_th()}"])
     threading.Thread(
         target=_deliver, args=(subject, text, sms or subject), daemon=True
     ).start()
@@ -266,6 +304,15 @@ def new_order(order: dict) -> None:
         f"ดูในระบบ: {SITE_URL}/admin/orders",
     ], sms=f"ออเดอร์ใหม่ {order['order_no']} ยอด {order['total']:,} บาท "
            f"โทร {order['customer']['phone']}")
+
+
+def order_status_changed(order: dict, status_label: str) -> None:
+    send(f"📦 อัปเดตสถานะคำสั่งซื้อ {order['order_no']}", [
+        f"สถานะใหม่: {status_label}",
+        f"ยอดรวม: ฿{order['total']:,}",
+        f"ผู้รับ: {order['customer']['name']} ({order['customer']['phone']})",
+        f"ดูในระบบ: {SITE_URL}/admin/orders/{order['order_no']}",
+    ], sms=f"ออเดอร์ {order['order_no']} สถานะ: {status_label}")
 
 
 def new_payment(payment: dict, order: dict | None) -> None:
